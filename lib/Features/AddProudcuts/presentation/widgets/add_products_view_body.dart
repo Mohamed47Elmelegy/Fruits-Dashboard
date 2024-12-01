@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:furute_app_dashbord/Features/Presentation/addProducts/widgets/image_field.dart';
-import 'package:furute_app_dashbord/Features/Presentation/addProducts/widgets/is_featured_checkbox.dart';
-import 'package:furute_app_dashbord/Features/domain/Entity/add_proudcuts_entity.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/image_field.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/is_featured_checkbox.dart';
 import 'package:furute_app_dashbord/core/extensions/padding_ext.dart';
 import 'package:furute_app_dashbord/core/widgets/butn.dart';
 import 'package:furute_app_dashbord/core/widgets/custom_text_field.dart';
@@ -11,6 +10,7 @@ import 'dart:developer';
 
 import '../../../../core/errors/validator.dart';
 import '../../../../core/theme/colors_theme.dart';
+import '../../domin/Entity/add_proudcuts_entity.dart';
 
 class AddProductsViewBody extends StatefulWidget {
   const AddProductsViewBody({super.key});

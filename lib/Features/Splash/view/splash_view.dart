@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../core/Routes/page_routes_name.dart';
-import '../../../../core/utils/app_images.dart';
-import '../../../../main.dart';
+import '../../../core/Routes/page_routes_name.dart';
+import '../../../core/utils/app_images.dart';
+import '../../../main.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
