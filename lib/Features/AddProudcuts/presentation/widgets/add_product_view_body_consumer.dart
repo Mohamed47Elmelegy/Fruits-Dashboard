@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../../../../core/services/snack_bar_service.dart';
+import '../../../../core/theme/colors_theme.dart';
 import '../../../../core/widgets/model_progress_hud.dart';
 import '../manager/cubit/add_product_cubit.dart';
 import 'add_products_view_body.dart';
