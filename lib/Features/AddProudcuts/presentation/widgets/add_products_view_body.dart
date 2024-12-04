@@ -1,16 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/Data/model/reviews_model.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/reviews_entity.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/image_field.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/is_featured_checkbox.dart';
 import 'package:furute_app_dashbord/core/extensions/padding_ext.dart';
 import 'package:furute_app_dashbord/core/widgets/butn.dart';
 import 'package:furute_app_dashbord/core/widgets/custom_text_field.dart';
 import 'package:gap/gap.dart';
-import 'dart:developer';
-
 import '../../../../core/errors/validator.dart';
 import '../../../../core/theme/colors_theme.dart';
+import '../../../../core/utils/app_images.dart';
 import '../../domin/Entity/add_proudcuts_entity.dart';
+import '../manager/cubit/add_product_cubit.dart';
+import 'is_organic_checkbox.dart';
 
 class AddProductsViewBody extends StatefulWidget {
   const AddProductsViewBody({super.key});
@@ -22,12 +26,15 @@ class AddProductsViewBody extends StatefulWidget {
 class _AddProductsViewBodyState extends State<AddProductsViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  late String productName, productCode, productDescription;
+  late num productPrice,
+      calorieDensity,
+      caloriesReferenceWeight,
+      expiryDateMonths;
   bool isFeatured = false;
-  late String productName;
-  late num productPrice;
-  late String productCode;
+  bool isOrganic = false;
+  late List<ReviewsModel> reviews = [];
   File? image;
-  late String productDescription;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -51,7 +58,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
                 productPrice = num.parse(value!);
               },
               hint: 'Product Price',
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.number,
             ),
             const Gap(16),
             CustomTextField(
@@ -66,12 +73,44 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
             CustomTextField(
               onValidate: Validator.validate,
               onSaved: (value) {
+                calorieDensity = num.parse(value!);
+              },
+              hint: 'Calorie Density',
+              keyboardType: TextInputType.number,
+            ),
+            const Gap(16),
+            CustomTextField(
+              onValidate: Validator.validate,
+              onSaved: (value) {
+                caloriesReferenceWeight = num.parse(value!);
+              },
+              hint: 'Calories Reference Weight',
+              keyboardType: TextInputType.number,
+            ),
+            const Gap(16),
+            CustomTextField(
+              onValidate: Validator.validate,
+              onSaved: (value) {
+                expiryDateMonths = num.parse(value!);
+              },
+              hint: 'ExpiryDate Per Months',
+              keyboardType: TextInputType.number,
+            ),
+            const Gap(16),
+            CustomTextField(
+              onValidate: Validator.validate,
+              onSaved: (value) {
                 productDescription = value!;
               },
               hint: 'Product Description ',
               keyboardType: TextInputType.text,
               maxLines: 5,
             ),
+            const Gap(16),
+            IsOrganicCheckbox(onChanged: (value) {
+              isOrganic = value;
+              setState(() {});
+            }),
             const Gap(16),
             IsFeaturedCheckbox(onChanged: (value) {
               isFeatured = value;
@@ -85,33 +124,42 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
             ),
             const Gap(16),
             Butn(
-                text: 'Add Product',
-                color: AppColors.green1_500,
-                onPressed: () {
-                  if (image != null) {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      AddProductsEntity addProducts = AddProductsEntity(
-                          productCode: productCode,
-                          productName: productName,
-                          productPrice: productPrice,
-                          productDescription: productDescription,
-                          productImage: image!,
-                          isFeatured: isFeatured);
-                      log('Product Name: $productName');
-                      log('Product Price: $productPrice');
-                      log('Product Code: $productCode');
-                      log('Product Description: $productDescription');
-                      log('Is Featured: $isFeatured');
-                      log('Image: $image');
-                    } else {
-                      autovalidateMode = AutovalidateMode.always;
-                      setState(() {});
-                    }
+              text: 'Add Product',
+              color: AppColors.green1_500,
+              onPressed: () {
+                if (image != null) {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    AddProductsEntity addProducts = AddProductsEntity(
+                      productName: productName,
+                      productPrice: productPrice,
+                      productCode: productCode,
+                      productDescription: productDescription,
+                      calorieDensity: calorieDensity.toInt(),
+                      caloriesReferenceWeight: caloriesReferenceWeight.toInt(),
+                      expiryDateMonths: expiryDateMonths.toInt(),
+                      isOrganic: isOrganic,
+                      isFeatured: isFeatured,
+                      productImage: image!,
+                      reviews: [
+                        ReviewsEntity(
+                            name: 'Mohamed',
+                            image: Assets.imagesStrawberry,
+                            rating: 4.5,
+                            date: DateTime.now().toIso8601String(),
+                            description: 'Good Product')
+                      ],
+                    );
+                    context.read<AddProductCubit>().addProduct(addProducts);
                   } else {
-                    showError(context);
+                    autovalidateMode = AutovalidateMode.always;
+                    setState(() {});
                   }
-                })
+                } else {
+                  showError(context);
+                }
+              },
+            )
           ],
         ),
       ).setHorizontalPadding(context, 16, enableMediaQuery: false),

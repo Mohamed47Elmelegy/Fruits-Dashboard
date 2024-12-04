@@ -52,12 +52,64 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:244051247756:android:c83b13fce76349217c71a9",
+        "android_client_info": {
+          "package_name": "com.example.furute.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244051247756-hqmksjo5anfv5sldo9i3n5uldp0nuoqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.furute.dev",
+            "certificate_hash": "000a55e604d30475299b2b376ecd5a15a4fdf4a3"
+          }
+        },
+        {
+          "client_id": "244051247756-ut2irikuebt88l4t6ms8gf8qfd6icb18.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA99v6kzJO5LCgQcZvA3ZuuYpQ6jt0_9F0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244051247756-ut2irikuebt88l4t6ms8gf8qfd6icb18.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "244051247756-fuumk4khn8ittd8es1dbf8gkbnhm7ft3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.frutesApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:244051247756:android:65369e2aeb755d3b7c71a9",
         "android_client_info": {
           "package_name": "com.example.furute_app_dashbord"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "244051247756-el8ja5hh348nvdohh45b0jgb5ango6ha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.furute_app_dashbord",
+            "certificate_hash": "000a55e604d30475299b2b376ecd5a15a4fdf4a3"
+          }
+        },
         {
           "client_id": "244051247756-ut2irikuebt88l4t6ms8gf8qfd6icb18.apps.googleusercontent.com",
           "client_type": 3

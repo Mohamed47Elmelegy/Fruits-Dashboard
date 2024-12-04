@@ -4,14 +4,14 @@ import '../../../../../core/theme/text_theme.dart';
 import '../../../../core/constants/constants.dart';
 import 'custom_checkbox.dart';
 
-class IsFeaturedCheckbox extends StatefulWidget {
-  const IsFeaturedCheckbox({super.key, required this.onChanged});
+class IsOrganicCheckbox extends StatefulWidget {
+  const IsOrganicCheckbox({super.key, required this.onChanged});
   final ValueChanged<bool> onChanged;
   @override
-  IsFeaturedCheckboxState createState() => IsFeaturedCheckboxState();
+  IsOrganicCheckboxState createState() => IsOrganicCheckboxState();
 }
 
-class IsFeaturedCheckboxState extends State<IsFeaturedCheckbox> {
+class IsOrganicCheckboxState extends State<IsOrganicCheckbox> {
   bool isFeatured = false;
 
   @override
@@ -22,7 +22,7 @@ class IsFeaturedCheckboxState extends State<IsFeaturedCheckbox> {
         SizedBox(
           width: Constatns.mediaQuery.width * 0.7,
           child: Text(
-            'Is Featured item?',
+            'Is Organic item?',
             style: AppTextStyles.bodySmallSemiBold13
                 .copyWith(color: AppColors.grayscale950),
           ),

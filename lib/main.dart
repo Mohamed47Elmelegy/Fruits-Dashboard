@@ -13,7 +13,9 @@ import 'core/theme/application_theme_manager.dart';
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SupabaseStorageService.initialSubabase();
+  await SupabaseStorageService.initSupabase();
+  await SupabaseStorageService.createBucket('fruits_images');
+
   Bloc.observer = BlocObserverService();
   await Firebase.initializeApp();
   getItSetup();
