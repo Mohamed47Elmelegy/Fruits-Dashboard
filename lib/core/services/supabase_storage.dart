@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants/constants.dart';
@@ -8,16 +7,16 @@ import 'package:path/path.dart' as b;
 class SupabaseStorageService implements StorageService {
   static late Supabase _supabase;
   static Future<void> createBucket(String bucketName) async {
-    try {
-      await _supabase.client.storage.getBucket(bucketName);
-      log('Bucket already exists');
-    } catch (e) {
-      if (e.toString().contains('404')) {
-        // إذا لم يتم العثور على الـ bucket، قم بإنشائه
-        await _supabase.client.storage.createBucket(bucketName);
-      } else {
-        rethrow;
+    var buckets = await _supabase.client.storage.listBuckets();
+    bool bucketExists = false;
+    for (var bucket in buckets) {
+      if (bucket.name == bucketName) {
+        bucketExists = true;
+        break;
       }
+    }
+    if (!bucketExists) {
+      await _supabase.client.storage.createBucket(bucketName);
     }
   }
 
