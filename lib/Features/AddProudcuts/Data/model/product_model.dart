@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:furute_app_dashbord/Features/AddProudcuts/Data/model/reviews_model.dart';
-import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/add_proudcuts_entity.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/proudcuts_entity.dart';
 
 class ProductModel {
   final String productName;
@@ -18,23 +18,25 @@ class ProductModel {
   final num ratingCount;
   final bool isOrganic;
   final List<ReviewsModel> reviews;
+  final num sellingCount;
   ProductModel({
+    required this.productName,
+    required this.productPrice,
+    required this.productCode,
+    required this.productDescription,
+    required this.productImage,
+    this.isFeatured = false,
+    this.imageUrl,
     required this.expiryDateMonths,
     required this.calorieDensity,
     required this.caloriesReferenceWeight,
     this.productRating = 0,
     this.ratingCount = 0,
-    required this.productDescription,
-    required this.productName,
-    required this.productPrice,
-    required this.productCode,
-    required this.productImage,
-    required this.reviews,
-    this.isFeatured = false,
     this.isOrganic = false,
-    this.imageUrl,
+    required this.reviews,
+    this.sellingCount = 0,
   });
-  factory ProductModel.fromEntity(AddProductsEntity addProductEntity) {
+  factory ProductModel.fromEntity(ProductsEntity addProductEntity) {
     return ProductModel(
       reviews: addProductEntity.reviews
           .map((e) => ReviewsModel.fromEntity(e))
@@ -59,6 +61,7 @@ class ProductModel {
       'productName': productName,
       'productPrice': productPrice,
       'productCode': productCode,
+      'sellingCount': sellingCount,
       'productDescription': productDescription,
       'isFeatured': isFeatured,
       'imageUrl': imageUrl,

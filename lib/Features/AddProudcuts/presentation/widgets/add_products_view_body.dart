@@ -12,7 +12,7 @@ import 'package:gap/gap.dart';
 import '../../../../core/errors/validator.dart';
 import '../../../../core/theme/colors_theme.dart';
 import '../../../../core/utils/app_images.dart';
-import '../../domin/Entity/add_proudcuts_entity.dart';
+import '../../domin/Entity/proudcuts_entity.dart';
 import '../manager/cubit/add_product_cubit.dart';
 import 'is_organic_checkbox.dart';
 
@@ -130,7 +130,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
                 if (image != null) {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    AddProductsEntity addProducts = AddProductsEntity(
+                    ProductsEntity addProducts = ProductsEntity(
                       productName: productName,
                       productPrice: productPrice,
                       productCode: productCode,

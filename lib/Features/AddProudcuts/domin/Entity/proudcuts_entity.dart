@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/reviews_entity.dart';
 
-class AddProductsEntity {
+class ProductsEntity {
   final String productName;
   final num productPrice;
   final String productCode;
@@ -18,7 +18,7 @@ class AddProductsEntity {
   final num ratingCount;
   final bool isOrganic;
   final List<ReviewsEntity> reviews;
-  AddProductsEntity({
+  ProductsEntity({
     required this.productName,
     required this.productPrice,
     required this.productCode,
