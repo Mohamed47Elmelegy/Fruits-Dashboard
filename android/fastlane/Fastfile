@@ -1,0 +1,20 @@
+default_platform(:android)
+
+platform :android do
+  desc "Lane for Android Firebase App Distribution"
+  lane :firebase_distribution do
+    sh "flutter clean"
+    sh "flutter build apk  --release -t lib/main.dart --no-tree-shake-icons"
+    release = firebase_app_distribution(
+            app: "1:244051247756:android:65369e2aeb755d3b7c71a9",
+            firebase_cli_token: "1//03au3Ib9TDMUdCgYIARAAGAMSNwF-L9Ir61v5hTtTkApBDZW63pBt7tWukgNL6rIGnH0u8rQxaVVRBeJYbp2r2nS0gqGbpz6pBTA",
+            android_artifact_type: "APK",
+            android_artifact_path: "../build/app/outputs/flutter-apk/app-release.apk",
+            testers: "mohamedelmelegydeveloper@gmail.com",
+            release_notes: "Add Products",
+            )
+    end
+  end
+  
+# fastlane add_plugin firebase_app_distribution
+# fastlane android firebase_distribution

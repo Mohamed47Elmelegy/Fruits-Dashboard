@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
+import 'package:furute_app_dashbord/core/config/ansicolor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants/constants.dart';
 import 'storage_service.dart';
@@ -27,13 +29,28 @@ class SupabaseStorageService implements StorageService {
     );
   }
 
-  @override
-  Future<String> uploadFile(File file, String path) async {
+@override
+Future<String> uploadFile(File file, String path) async {
+  try {
+    log(DebugConsoleMessages.success('Uploading file: ${file.path}'));
     String fileName = b.basename(file.path);
-    String extensionName = b.extension(file.path);
-    var result = await _supabase.client.storage
-        .from('fruits_images')
-        .upload('$path/$fileName.$extensionName', file);
-    return result;
+    // رفع الملف إلى Supabase
+    await _supabase.client.storage
+        .from(Constatns.supabaseBucket)
+        .upload('$path/$fileName', file);
+    log(DebugConsoleMessages.success('File uploaded: $fileName'));
+
+    // الحصول على الرابط العام للملف
+    final String publicUrl = _supabase.client.storage
+        .from(Constatns.supabaseBucket)
+        .getPublicUrl('$path/$fileName'); // تأكد من وجود / بين path و fileName
+
+    log(DebugConsoleMessages.success('File public url: $publicUrl'));
+    return publicUrl; // إرجاع الرابط العام
+  } catch (e) {
+    log(DebugConsoleMessages.error('Failed to upload file: $e'));
+    throw Exception('Failed to upload file: $e');
   }
+}
+
 }
