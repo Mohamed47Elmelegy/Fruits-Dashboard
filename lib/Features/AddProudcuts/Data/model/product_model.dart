@@ -13,7 +13,7 @@ class ProductModel {
   String? imageUrl;
   final int expiryDateMonths;
   final int calorieDensity;
-  final int caloriesReferenceWeight;
+  final int unitAmount;
   final num productRating;
   final num ratingCount;
   final bool isOrganic;
@@ -29,7 +29,7 @@ class ProductModel {
     this.imageUrl,
     required this.expiryDateMonths,
     required this.calorieDensity,
-    required this.caloriesReferenceWeight,
+    required this.unitAmount,
     this.productRating = 0,
     this.ratingCount = 0,
     this.isOrganic = false,
@@ -50,7 +50,7 @@ class ProductModel {
       imageUrl: addProductEntity.imageUrl,
       expiryDateMonths: addProductEntity.expiryDateMonths,
       calorieDensity: addProductEntity.calorieDensity,
-      caloriesReferenceWeight: addProductEntity.caloriesReferenceWeight,
+      unitAmount: addProductEntity.unitAmount,
       productRating: addProductEntity.productRating,
       ratingCount: addProductEntity.ratingCount,
       isOrganic: addProductEntity.isOrganic,
@@ -67,7 +67,7 @@ class ProductModel {
       'imageUrl': imageUrl,
       'expiryDateMonths': expiryDateMonths,
       'calories': calorieDensity,
-      'caloriesPerServing': caloriesReferenceWeight,
+      'unitAmount': unitAmount,
       'productRating': productRating,
       'ratingCount': ratingCount,
       'isOrganic': isOrganic,

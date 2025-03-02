@@ -27,10 +27,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   late String productName, productCode, productDescription;
-  late num productPrice,
-      calorieDensity,
-      caloriesReferenceWeight,
-      expiryDateMonths;
+  late num productPrice, calorieDensity, unitAmount, expiryDateMonths;
   bool isFeatured = false;
   bool isOrganic = false;
   late List<ReviewsModel> reviews = [];
@@ -82,7 +79,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
             CustomTextField(
               onValidate: Validator.validate,
               onSaved: (value) {
-                caloriesReferenceWeight = num.parse(value!);
+                unitAmount = num.parse(value!);
               },
               hint: 'Calories Reference Weight',
               keyboardType: TextInputType.number,
@@ -136,7 +133,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
                       productCode: productCode,
                       productDescription: productDescription,
                       calorieDensity: calorieDensity.toInt(),
-                      caloriesReferenceWeight: caloriesReferenceWeight.toInt(),
+                      unitAmount: unitAmount.toInt(),
                       expiryDateMonths: expiryDateMonths.toInt(),
                       isOrganic: isOrganic,
                       isFeatured: isFeatured,
