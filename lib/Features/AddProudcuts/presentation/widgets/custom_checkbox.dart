@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../../../../core/utils/app_images.dart';
-import '../../../../core/theme/colors_theme.dart';
+import '../../../../core/theme/application_theme_manager.dart';
 
 class CustomCheckbox extends StatefulWidget {
   final bool isChecked;
@@ -26,6 +24,14 @@ class CustomCheckboxState extends State<CustomCheckbox> {
     _isChecked = widget.isChecked;
   }
 
+  @override
+  void didUpdateWidget(CustomCheckbox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isChecked != widget.isChecked) {
+      _isChecked = widget.isChecked;
+    }
+  }
+
   void _toggleCheckbox() {
     setState(() {
       _isChecked = !_isChecked;
@@ -38,26 +44,38 @@ class CustomCheckboxState extends State<CustomCheckbox> {
     return GestureDetector(
       onTap: _toggleCheckbox,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: 24.0,
-        height: 24.0,
+        duration: const Duration(milliseconds: 200),
+        width: 28.0,
+        height: 28.0,
         decoration: BoxDecoration(
-          color: _isChecked ? AppColors.green1_500 : Colors.white,
+          color: _isChecked
+              ? ApplicationThemeManager.primaryColor
+              : ApplicationThemeManager.surfaceColor,
           border: Border.all(
-            color: _isChecked ? Colors.transparent : AppColors.grayscale200,
-            width: 1.0,
+            color: _isChecked
+                ? ApplicationThemeManager.primaryColor
+                : ApplicationThemeManager.textSecondaryColor.withOpacity(0.3),
+            width: 2.0,
           ),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: _isChecked
+              ? [
+                  BoxShadow(
+                    color:
+                        ApplicationThemeManager.primaryColor.withOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         alignment: Alignment.center,
         child: _isChecked
-            ? Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: SvgPicture.asset(
-                  Assets.imagesCheck,
-                  width: 16.0,
-                  height: 16.0,
-                ),
+            ? const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 18,
+                weight: 900,
               )
             : null,
       ),

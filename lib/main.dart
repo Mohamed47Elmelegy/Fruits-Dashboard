@@ -18,7 +18,7 @@ void main() async {
 
   Bloc.observer = BlocObserverService();
   await Firebase.initializeApp();
-  getItSetup();
+  setupGetit();
   runApp(const FruitAppDashBord());
 }
 

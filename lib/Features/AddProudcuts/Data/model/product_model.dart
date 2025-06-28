@@ -8,7 +8,6 @@ class ProductModel {
   final num productPrice;
   final String productCode;
   final String productDescription;
-  final File productImage;
   final bool isFeatured;
   String? imageUrl;
   final int expiryDateMonths;
@@ -24,7 +23,6 @@ class ProductModel {
     required this.productPrice,
     required this.productCode,
     required this.productDescription,
-    required this.productImage,
     this.isFeatured = false,
     this.imageUrl,
     required this.expiryDateMonths,
@@ -45,7 +43,6 @@ class ProductModel {
       productPrice: addProductEntity.productPrice,
       productCode: addProductEntity.productCode,
       productDescription: addProductEntity.productDescription,
-      productImage: addProductEntity.productImage,
       isFeatured: addProductEntity.isFeatured,
       imageUrl: addProductEntity.imageUrl,
       expiryDateMonths: addProductEntity.expiryDateMonths,

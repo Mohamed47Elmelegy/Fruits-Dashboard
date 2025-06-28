@@ -1,0 +1,2 @@
+D:/Route/tharwat samy/Fruit App Dashbord/fruit_app_dashbord/android/app/.cxx/RelWithDebInfo/1b305r4l/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/Route/tharwat samy/Fruit App Dashbord/fruit_app_dashbord/android/app/.cxx/RelWithDebInfo/1b305r4l/armeabi-v7a/CMakeFiles/rebuild_cache.dir

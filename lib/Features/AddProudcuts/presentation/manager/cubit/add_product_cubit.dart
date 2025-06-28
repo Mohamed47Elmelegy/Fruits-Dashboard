@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:furute_app_dashbord/core/repos/add_images/add_images_repo.dart';
@@ -17,7 +19,7 @@ class AddProductCubit extends Cubit<AddProductState> {
   Future<void> addProduct(ProductsEntity addProductsEntity) async {
     emit(AddProductLoding());
     var result =
-        await addImagesRepo.uploadImage(addProductsEntity.productImage);
+        await addImagesRepo.uploadImage(File(addProductsEntity.imageUrl!));
     result.fold(
       (f) {
         emit(

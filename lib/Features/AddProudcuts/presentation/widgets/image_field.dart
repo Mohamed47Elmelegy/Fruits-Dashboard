@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../core/widgets/custom_snackbar.dart';
+
 class ImageField extends StatefulWidget {
   const ImageField({super.key, required this.onFileChange});
   final ValueChanged<File?> onFileChange;
@@ -24,12 +26,14 @@ class _ImageFieldState extends State<ImageField> {
           setState(() {});
           try {
             await pickImage();
-          } on Exception {
+          } catch (e) {
+            // Handle any errors that might occur
+            CustomSnackBar.showError(context, 'Error picking image: $e');
+          } finally {
+            // Always reset loading state
             isLoading = false;
             setState(() {});
           }
-          isLoading = false;
-          setState(() {});
         },
         child: Stack(
           children: [
@@ -70,8 +74,12 @@ class _ImageFieldState extends State<ImageField> {
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    fileImage = File(image!.path);
-    widget.onFileChange(fileImage!);
-    setState(() {});
+
+    // Check if image is not null before proceeding
+    if (image != null) {
+      fileImage = File(image.path);
+      widget.onFileChange(fileImage!);
+      setState(() {});
+    }
   }
 }
