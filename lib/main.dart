@@ -10,6 +10,7 @@ import 'core/services/bloc_observer_service.dart';
 import 'core/services/get_it_services.dart';
 import 'core/services/supabase_init_service.dart';
 import 'core/services/supabase_test_service.dart';
+import 'core/services/enhanced_firestore_service.dart';
 import 'core/theme/application_theme_manager.dart';
 import 'core/config/ansicolor.dart';
 import 'firebase_options.dart';
@@ -28,6 +29,11 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     DebugConsoleMessages.success('✅ Firebase initialized successfully');
+
+    // Initialize enhanced Firestore service
+    DebugConsoleMessages.info('📊 Initializing enhanced Firestore service...');
+    await EnhancedFirestoreService.initialize();
+    DebugConsoleMessages.success('✅ Enhanced Firestore service initialized');
 
     // Initialize Supabase using the service
     DebugConsoleMessages.info('🔄 Initializing Supabase...');
