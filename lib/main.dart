@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -11,11 +12,38 @@ import 'core/services/get_it_services.dart';
 import 'core/services/supabase_init_service.dart';
 import 'core/services/supabase_test_service.dart';
 import 'core/services/enhanced_firestore_service.dart';
+import 'core/services/initial_data_service.dart';
+import 'core/services/firebase_status_service.dart';
 import 'core/theme/application_theme_manager.dart';
 import 'core/config/ansicolor.dart';
 import 'firebase_options.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+// Test Firebase connection
+Future<void> testFirebaseConnection() async {
+  try {
+    DebugConsoleMessages.info('🔍 Testing Firebase connection...');
+
+    // Test Firestore connection
+    final testDoc = await FirebaseFirestore.instance.collection('test').add({
+      'test': 'connection',
+      'timestamp': FieldValue.serverTimestamp(),
+      'platform': 'iOS',
+      'appVersion': '1.0.5'
+    });
+
+    DebugConsoleMessages.success(
+        '✅ Firestore connection successful: ${testDoc.id}');
+
+    // Clean up test document
+    await testDoc.delete();
+    DebugConsoleMessages.info('🧹 Test document cleaned up');
+  } catch (e) {
+    DebugConsoleMessages.error('❌ Firebase connection test failed: $e');
+  }
+}
+
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +57,9 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     DebugConsoleMessages.success('✅ Firebase initialized successfully');
+
+    // Test Firebase connection
+    await testFirebaseConnection();
 
     // Initialize enhanced Firestore service
     DebugConsoleMessages.info('📊 Initializing enhanced Firestore service...');
@@ -51,9 +82,17 @@ void main() async {
     );
     DebugConsoleMessages.success('✅ Admin signed in successfully');
 
+    // Initialize app data structures
+    DebugConsoleMessages.info('📊 Initializing app data structures...');
+    await InitialDataService.initializeAppData();
+    DebugConsoleMessages.success('✅ App data structures initialized');
+
     DebugConsoleMessages.info('⚙️ Setting up dependency injection...');
     setupGetit();
     DebugConsoleMessages.success('✅ Dependency injection setup complete');
+
+    // Print comprehensive Firebase status report
+    await FirebaseStatusService.printFirebaseStatus();
 
     DebugConsoleMessages.success('🎉 App initialization complete!');
     runApp(const FruitAppDashBord());
