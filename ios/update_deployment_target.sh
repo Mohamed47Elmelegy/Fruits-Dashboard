@@ -21,6 +21,14 @@ else
     echo "❌ project.pbxproj not found"
 fi
 
+# Update AppFrameworkInfo.plist
+if [ -f "Flutter/AppFrameworkInfo.plist" ]; then
+    sed -i '' 's/<string>12.0<\/string>/<string>13.0<\/string>/g' Flutter/AppFrameworkInfo.plist
+    echo "✅ Updated AppFrameworkInfo.plist"
+else
+    echo "❌ AppFrameworkInfo.plist not found"
+fi
+
 # Update Info.plist if needed
 if [ -f "Runner/Info.plist" ]; then
     # Add minimum deployment target if not exists

@@ -23,6 +23,18 @@ jobs:
           cd ios
           chmod +x update_deployment_target.sh
           ./update_deployment_target.sh
+          echo "Current Podfile content:"
+          cat Podfile
+          echo "Current deployment target in project.pbxproj:"
+          grep "IPHONEOS_DEPLOYMENT_TARGET" Runner.xcodeproj/project.pbxproj
+
+      # Clean iOS build cache
+      - name: Clean iOS build cache
+        run: |
+          cd ios
+          rm -rf Pods
+          rm -rf .symlinks
+          rm -f Podfile.lock
 
       - run: pod repo update
         working-directory: ios
