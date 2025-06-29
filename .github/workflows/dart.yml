@@ -14,10 +14,20 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
+      
       - run: flutter pub get
       
+      # Update iOS deployment target
+      - name: Update iOS deployment target
+        run: |
+          cd ios
+          chmod +x update_deployment_target.sh
+          ./update_deployment_target.sh
 
       - run: pod repo update
+        working-directory: ios
+
+      - run: pod install
         working-directory: ios
 
       - run: flutter build ios --release --no-codesign
