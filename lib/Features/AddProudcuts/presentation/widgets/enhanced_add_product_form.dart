@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/factories/cubit_factory.dart';
+import '../../../../core/extensions/context_extensions.dart';
 import '../manager/enhanced_product_cubit.dart';
 import 'enhanced_add_product_consumer.dart';
 
@@ -18,6 +18,7 @@ class EnhancedAddProductView extends StatelessWidget {
     );
   }
 
+  /// Get existing cubit from context or create new one using factory
   EnhancedProductCubit _getOrCreateCubit(BuildContext context) {
     // Try to get existing cubit from context
     final existingCubit = context.tryRead<EnhancedProductCubit>();

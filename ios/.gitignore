@@ -32,3 +32,10 @@ Runner/GeneratedPluginRegistrant.*
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+# Additional files to ignore
+Podfile.lock
+Pods/
+*.xcworkspace
+!default.xcworkspace
+GoogleService-Info.plist

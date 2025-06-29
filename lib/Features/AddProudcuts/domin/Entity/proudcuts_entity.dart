@@ -1,8 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
-import 'dart:io';
 
-import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/reviews_entity.dart';
+import 'reviews_entity.dart';
 
 class ProductsEntity extends Equatable {
   final String productName;
@@ -37,22 +36,4 @@ class ProductsEntity extends Equatable {
 
   @override
   List<Object?> get props => [productCode];
-
-  Map<String, dynamic> toJson() {
-    return {
-      'productName': productName,
-      'productPrice': productPrice,
-      'productCode': productCode,
-      'productDescription': productDescription,
-      'isFeatured': isFeatured,
-      'imageUrl': imageUrl,
-      'expiryDateMonths': expiryDateMonths,
-      'calories': calorieDensity,
-      'unitAmount': unitAmount,
-      'productRating': productRating,
-      'ratingCount': ratingCount,
-      'isOrganic': isOrganic,
-      'reviews': reviews.map((e) => e.toJson()).toList(),
-    };
-  }
 }

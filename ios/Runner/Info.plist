@@ -45,5 +45,24 @@
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
+    
+    <!-- Permissions for Image Picker -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to photo library to select product images.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to camera to take product photos.</string>
+    
+    <!-- Permissions for Firebase -->
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleURLName</key>
+        <string>REVERSED_CLIENT_ID</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.YOUR_REVERSED_CLIENT_ID</string>
+        </array>
+      </dict>
+    </array>
   </dict>
 </plist>

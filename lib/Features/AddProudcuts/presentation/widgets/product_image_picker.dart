@@ -138,9 +138,10 @@ class ProductImagePicker extends StatelessWidget {
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: ApplicationThemeManager.primaryColor
                                 .withOpacity(0.1),
@@ -148,11 +149,11 @@ class ProductImagePicker extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.add_photo_alternate,
-                            size: 48,
+                            size: 40,
                             color: ApplicationThemeManager.primaryColor,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Text(
                           'Add Product Image',
                           style:
@@ -161,7 +162,7 @@ class ProductImagePicker extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Text(
                           'Tap to select from gallery',
                           style: Theme.of(context)
@@ -172,11 +173,11 @@ class ProductImagePicker extends StatelessWidget {
                                     ApplicationThemeManager.textSecondaryColor,
                               ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: 12,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
                             color: ApplicationThemeManager.primaryColor,
@@ -188,14 +189,14 @@ class ProductImagePicker extends StatelessWidget {
                               Icon(
                                 Icons.upload,
                                 color: Colors.white,
-                                size: 16,
+                                size: 14,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 6),
                               Text(
                                 'Upload Image',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

@@ -1,114 +1,88 @@
 import 'dart:developer';
-import 'package:furute_app_dashbord/core/repos/add_images/add_images_repo.dart';
-import 'package:furute_app_dashbord/core/repos/add_images/add_images_repo_implment.dart';
-import 'package:furute_app_dashbord/core/repos/add_proudcuts/add_products_repo_implment.dart';
-import 'package:furute_app_dashbord/core/services/database_service.dart';
-import 'package:furute_app_dashbord/core/services/firebase_firestore.dart';
-import 'package:furute_app_dashbord/core/services/storage_service.dart';
-import 'package:furute_app_dashbord/core/services/supabase_storage.dart';
 import 'package:get_it/get_it.dart';
-
-import '../repos/add_proudcuts/add_products_repo.dart';
-import '../services/product_integration_service.dart';
-import '../repos/add_proudcuts/enhanced_product_repo.dart';
+import '../config/ansicolor.dart';
+import '../../Features/Orders/domain/usecases/get_all_orders_usecase.dart';
+import '../../Features/Orders/domain/usecases/get_orders_by_status_usecase.dart';
+import '../../Features/Orders/domain/usecases/update_order_status_usecase.dart';
+import '../../Features/Orders/domain/usecases/get_order_statistics_usecase.dart';
+import '../../Features/Orders/domain/usecases/search_orders_usecase.dart';
+import '../../Features/Orders/data/repositories/order_repository_impl.dart';
+import '../../Features/Orders/domain/repositories/order_repository.dart';
+import '../services/order_management_service.dart';
 import '../../Features/AddProudcuts/domin/usecases/add_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/update_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/delete_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/get_all_products_usecase.dart';
-import '../config/ansicolor.dart';
+import '../../Features/AddProudcuts/domin/repos/product_repository.dart';
+import '../../Features/AddProudcuts/Data/repos/enhanced_product_repository.dart';
+import 'package:furute_app_dashbord/core/services/product_integration_service.dart';
 
 final getIt = GetIt.instance;
 
 void setupGetit() {
   try {
-    // Register existing services
-    try {
-      getIt.registerSingleton<StorageService>(SupabaseStorageService());
-    } catch (e) {
-      log('Failed to register StorageService: $e');
-    }
+    // Register Order Management Services
+    getIt.registerLazySingleton<OrderManagementService>(
+      () => OrderManagementService(),
+    );
 
-    try {
-      getIt.registerSingleton<DatabaseService>(FirebaseFirestoreService());
-    } catch (e) {
-      log('Failed to register DatabaseService: $e');
-    }
+    // Register Order Repository
+    getIt.registerLazySingleton<OrderRepository>(
+      () => OrderRepositoryImpl(getIt<OrderManagementService>()),
+    );
 
-    try {
-      getIt.registerSingleton<AddImagesRepo>(
-          AddImagesRepoImplment(getIt.get<StorageService>()));
-    } catch (e) {
-      log('Failed to register AddImagesRepo: $e');
-    }
+    // Register Order Use Cases
+    getIt.registerLazySingleton<GetAllOrdersUseCase>(
+      () => GetAllOrdersUseCase(getIt<OrderRepository>()),
+    );
 
-    try {
-      getIt.registerSingleton<AddProductsRepo>(
-          AddProductRepoImplment(getIt.get<DatabaseService>()));
-    } catch (e) {
-      log('Failed to register AddProductsRepo: $e');
-    }
+    getIt.registerLazySingleton<GetOrdersByStatusUseCase>(
+      () => GetOrdersByStatusUseCase(getIt<OrderRepository>()),
+    );
 
-    // Register Enhanced Product Management dependencies
-    try {
-      getIt.registerSingleton<ProductIntegrationService>(
-          ProductIntegrationService());
-    } catch (e) {
-      log('Failed to register ProductIntegrationService: $e');
-    }
+    getIt.registerLazySingleton<UpdateOrderStatusUseCase>(
+      () => UpdateOrderStatusUseCase(getIt<OrderRepository>()),
+    );
 
-    try {
-      if (getIt.isRegistered<ProductIntegrationService>()) {
-        getIt.registerSingleton<EnhancedProductRepo>(
-          EnhancedProductRepoImpl(getIt<ProductIntegrationService>()),
-        );
-      }
-    } catch (e) {
-      log('Failed to register EnhancedProductRepo: $e');
-    }
+    getIt.registerLazySingleton<GetOrderStatisticsUseCase>(
+      () => GetOrderStatisticsUseCase(getIt<OrderRepository>()),
+    );
 
-    try {
-      if (getIt.isRegistered<EnhancedProductRepo>()) {
-        getIt.registerSingleton<AddProductUseCase>(
-          AddProductUseCase(getIt<EnhancedProductRepo>()),
-        );
-      }
-    } catch (e) {
-      log('Failed to register AddProductUseCase: $e');
-    }
+    getIt.registerLazySingleton<SearchOrdersUseCase>(
+      () => SearchOrdersUseCase(getIt<OrderRepository>()),
+    );
 
-    try {
-      if (getIt.isRegistered<EnhancedProductRepo>()) {
-        getIt.registerSingleton<UpdateProductUseCase>(
-          UpdateProductUseCase(getIt<EnhancedProductRepo>()),
-        );
-      }
-    } catch (e) {
-      log('Failed to register UpdateProductUseCase: $e');
-    }
+    // Register Product Integration Service first (before other services that depend on it)
+    getIt.registerLazySingleton<ProductIntegrationService>(
+      () => ProductIntegrationService(),
+    );
 
-    try {
-      if (getIt.isRegistered<EnhancedProductRepo>()) {
-        getIt.registerSingleton<DeleteProductUseCase>(
-          DeleteProductUseCase(getIt<EnhancedProductRepo>()),
-        );
-      }
-    } catch (e) {
-      log('Failed to register DeleteProductUseCase: $e');
-    }
+    // Register Product Repository
+    getIt.registerLazySingleton<ProductRepository>(
+      () => EnhancedProductRepository(getIt<ProductIntegrationService>()),
+    );
 
-    try {
-      if (getIt.isRegistered<EnhancedProductRepo>()) {
-        getIt.registerSingleton<GetAllProductsUseCase>(
-          GetAllProductsUseCase(getIt<EnhancedProductRepo>()),
-        );
-      }
-    } catch (e) {
-      log('Failed to register GetAllProductsUseCase: $e');
-    }
+    // Register Product Use Cases
+    getIt.registerLazySingleton<AddProductUseCase>(
+      () => AddProductUseCase(getIt<ProductRepository>()),
+    );
+
+    getIt.registerLazySingleton<UpdateProductUseCase>(
+      () => UpdateProductUseCase(getIt<ProductRepository>()),
+    );
+
+    getIt.registerLazySingleton<DeleteProductUseCase>(
+      () => DeleteProductUseCase(getIt<ProductRepository>()),
+    );
+
+    getIt.registerLazySingleton<GetAllProductsUseCase>(
+      () => GetAllProductsUseCase(getIt<ProductRepository>()),
+    );
 
     DebugConsoleMessages.success('✅ All dependencies registered successfully');
   } catch (e) {
     DebugConsoleMessages.error('❌ Error registering dependencies: $e');
+    DebugConsoleMessages.info('💡 Error details: $e');
     // Don't rethrow - let the app continue with partial functionality
   }
 }

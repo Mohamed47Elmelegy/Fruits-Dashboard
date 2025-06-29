@@ -62,6 +62,10 @@ class NavigationHelper {
     pushNamed(PageRoutesName.ordersView);
   }
 
+  static void goToOrders() {
+    pushNamed(PageRoutesName.orders);
+  }
+
   static void goToOrderTracking() {
     pushNamed(PageRoutesName.orderTracking);
   }

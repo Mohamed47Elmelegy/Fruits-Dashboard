@@ -11,7 +11,7 @@ class OrderManagementService {
     try {
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.orders)
-          .orderBy('createdAt', descending: true)
+          .orderBy('createdAtTimestamp', descending: true)
           .get();
 
       return querySnapshot.docs
@@ -32,7 +32,7 @@ class OrderManagementService {
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.orders)
           .where('status', isEqualTo: status)
-          .orderBy('createdAt', descending: true)
+          .orderBy('createdAtTimestamp', descending: true)
           .get();
 
       return querySnapshot.docs
@@ -83,7 +83,7 @@ class OrderManagementService {
       statusHistory.add({
         'status': newStatus,
         'updatedBy': currentUser.uid,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': DateTime.now().toIso8601String(),
         'notes': notes,
       });
 
@@ -148,7 +148,7 @@ class OrderManagementService {
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.orders)
           .where('assignedAdminId', isEqualTo: currentUser.uid)
-          .orderBy('createdAt', descending: true)
+          .orderBy('createdAtTimestamp', descending: true)
           .get();
 
       return querySnapshot.docs
@@ -216,8 +216,9 @@ class OrderManagementService {
 
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.orders)
-          .where('createdAt', isGreaterThan: sevenDaysAgo)
-          .orderBy('createdAt', descending: true)
+          .where('createdAtTimestamp',
+              isGreaterThan: sevenDaysAgo.millisecondsSinceEpoch)
+          .orderBy('createdAtTimestamp', descending: true)
           .limit(20)
           .get();
 
@@ -240,7 +241,7 @@ class OrderManagementService {
 
       return allOrders.where((order) {
         final customerName =
-            order['customerName']?.toString().toLowerCase() ?? '';
+            order['address']?['fullName']?.toString().toLowerCase() ?? '';
         final orderId = order['orderId']?.toString().toLowerCase() ?? '';
         final searchQuery = query.toLowerCase();
 
@@ -249,6 +250,43 @@ class OrderManagementService {
       }).toList();
     } catch (e) {
       print('Error searching orders: $e');
+      rethrow;
+    }
+  }
+
+  /// Cancel order and remove tracking number
+  Future<void> cancelOrder(String orderId, {String? notes}) async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) throw Exception('User not authenticated');
+
+      final order = await getOrderById(orderId);
+      if (order == null) throw Exception('Order not found');
+
+      // Create status history entry
+      final statusHistory = order['statusHistory'] ?? [];
+      statusHistory.add({
+        'status': OrderStatus.cancelled,
+        'updatedBy': currentUser.uid,
+        'updatedAt': DateTime.now().toIso8601String(),
+        'notes': notes ?? 'Order cancelled by admin',
+      });
+
+      // Update order - remove tracking number when cancelled
+      await _firestore
+          .collection(FirebaseCollections.orders)
+          .doc(orderId)
+          .update({
+        'status': OrderStatus.cancelled,
+        'trackingNumber': null, // Remove tracking number
+        'lastUpdated': FieldValue.serverTimestamp(),
+        'statusHistory': statusHistory,
+        'assignedAdminId': currentUser.uid,
+        'cancelledAt': FieldValue.serverTimestamp(),
+        'cancelledBy': currentUser.uid,
+      });
+    } catch (e) {
+      print('Error cancelling order: $e');
       rethrow;
     }
   }

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/repos/add_proudcuts/enhanced_product_repo.dart';
+import '../repos/product_repository.dart';
 
 class DeleteProductUseCase {
-  final EnhancedProductRepo _productRepo;
+  final ProductRepository _productRepo;
 
   DeleteProductUseCase(this._productRepo);
 

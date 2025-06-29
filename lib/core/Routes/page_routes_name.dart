@@ -11,6 +11,7 @@ class PageRoutesName {
   static const String orderConfirmed = '/order-confirmed';
   static const String activeOrders = '/active-orders';
   static const String inactiveOrders = '/inactive-orders';
+  static const String orders = '/orders';
   static const String profile = '/profile';
   static const String products = '/products';
   static const String productDetails = '/product-details';

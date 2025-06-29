@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/proudcuts_entity.dart';
+import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/reviews_entity.dart';
 import '../../errors/failure.dart';
 import '../../services/product_integration_service.dart';
 import 'dart:io';
@@ -155,7 +156,15 @@ class EnhancedProductRepoImpl implements EnhancedProductRepo {
       'productRating': entity.productRating,
       'ratingCount': entity.ratingCount,
       'isOrganic': entity.isOrganic,
-      'reviews': entity.reviews.map((e) => e.toJson()).toList(),
+      'reviews': entity.reviews
+          .map((e) => {
+                'name': e.name,
+                'image': e.image,
+                'rating': e.rating,
+                'date': e.date,
+                'description': e.description,
+              })
+          .toList(),
       'sellingCount': 0, // Default value for new products
     };
   }

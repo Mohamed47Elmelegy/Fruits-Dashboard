@@ -60,7 +60,8 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
     _productDescriptionController.text = product['productDescription'] ?? '';
     _expiryDateMonthsController.text =
         product['expiryDateMonths']?.toString() ?? '';
-    _calorieDensityController.text = product['calories']?.toString() ?? '';
+    _calorieDensityController.text =
+        product['calorieDensity']?.toString() ?? '';
     _unitAmountController.text = product['unitAmount']?.toString() ?? '';
     _isFeatured = product['isFeatured'] ?? false;
     _isOrganic = product['isOrganic'] ?? false;
@@ -90,11 +91,11 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
         reviews: widget.productToEdit?['reviews'] != null
             ? (widget.productToEdit!['reviews'] as List)
                 .map((e) => ReviewsEntity(
-                      name: e['name'],
-                      image: e['image'],
-                      rating: e['rating'],
-                      date: e['date'],
-                      description: e['description'],
+                      name: e['name'] ?? '',
+                      image: e['image'] ?? '',
+                      rating: e['rating'] ?? 0,
+                      date: e['date'] ?? '',
+                      description: e['description'] ?? '',
                     ))
                 .toList()
             : [],
@@ -149,7 +150,7 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SectionHeader(
+                        const SectionHeader(
                           icon: Icons.photo_camera,
                           title: 'Product Image',
                         ),

@@ -11,14 +11,4 @@ class ReviewsEntity {
       required this.rating,
       required this.date,
       required this.description});
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'image': image,
-      'rating': rating,
-      'date': date,
-      'description': description,
-    };
-  }
 }

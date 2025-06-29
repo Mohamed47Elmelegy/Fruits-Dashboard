@@ -29,13 +29,22 @@ class EnhancedProductCubit extends Cubit<EnhancedProductState> {
 
   /// Add new product
   Future<void> addProduct(ProductsEntity product, File? imageFile) async {
+    print('🎯 Cubit: Starting to add product...');
+    print('📦 Cubit: Product name: ${product.productName}');
+
     emit(EnhancedProductLoading());
 
     final result = await _addProductUseCase(product, imageFile);
 
     result.fold(
-      (failure) => emit(EnhancedProductFailure(failure.message)),
-      (productId) => emit(EnhancedProductAdded(productId)),
+      (failure) {
+        print('❌ Cubit: Product addition failed: ${failure.message}');
+        emit(EnhancedProductFailure(failure.message));
+      },
+      (productId) {
+        print('✅ Cubit: Product added successfully with ID: $productId');
+        emit(EnhancedProductAdded(productId));
+      },
     );
   }
 

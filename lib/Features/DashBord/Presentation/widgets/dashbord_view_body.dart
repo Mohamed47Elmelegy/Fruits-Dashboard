@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:furute_app_dashbord/core/widgets/butn.dart';
-import '../../../../core/utils/navigation_helper.dart';
-import '../../../../core/theme/colors_theme.dart';
-
-import '../../../../core/Routes/page_routes_name.dart';
+import '../../../../core/theme/application_theme_manager.dart';
+import 'dashboard_header.dart';
+import 'dashboard_choices_section.dart';
 
 class DashbordViewBody extends StatelessWidget {
   const DashbordViewBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Butn(
-        text: 'Manage Products',
-        color: AppColors.green1_500,
-        onPressed: () {
-          NavigationHelper.goToEnhancedProducts();
-        },
+    return const Scaffold(
+      backgroundColor: ApplicationThemeManager.backgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              // Header Section
+              DashboardHeader(),
+
+              // Choices Section
+              DashboardChoicesSection(),
+
+              // Bottom padding for better scrolling
+              SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
     );
   }

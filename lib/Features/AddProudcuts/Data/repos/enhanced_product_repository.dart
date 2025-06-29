@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../domin/Entity/proudcuts_entity.dart';
+import '../../domin/Entity/reviews_entity.dart';
 import '../../domin/repos/product_repository.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/services/product_integration_service.dart';
@@ -14,10 +15,19 @@ class EnhancedProductRepository implements ProductRepository {
   Future<Either<Failure, String>> addProduct(
       ProductsEntity product, File? imageFile) async {
     try {
+      print('🔄 Repository: Starting to add product...');
+      print('📦 Repository: Product entity: ${product.productName}');
+
       final productMap = _convertEntityToMap(product);
+      print('🗺️ Repository: Converted to map: $productMap');
+
       final productId = await _productService.addProduct(productMap, imageFile);
+      print('✅ Repository: Product added successfully with ID: $productId');
+
       return Right(productId);
     } catch (e) {
+      print('❌ Repository: Error adding product: $e');
+      print('🔍 Repository: Error type: ${e.runtimeType}');
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -54,29 +64,31 @@ class EnhancedProductRepository implements ProductRepository {
     }
   }
 
-  Map<String, dynamic> _convertEntityToMap(ProductsEntity product) {
+  /// Convert ProductsEntity to Map for Firestore
+  Map<String, dynamic> _convertEntityToMap(ProductsEntity entity) {
     return {
-      'productName': product.productName,
-      'productPrice': product.productPrice,
-      'productCode': product.productCode,
-      'productDescription': product.productDescription,
-      'isFeatured': product.isFeatured,
-      'imageUrl': product.imageUrl,
-      'expiryDateMonths': product.expiryDateMonths,
-      'calories': product.calorieDensity,
-      'unitAmount': product.unitAmount,
-      'productRating': product.productRating,
-      'ratingCount': product.ratingCount,
-      'isOrganic': product.isOrganic,
-      'reviews': product.reviews
-          .map((review) => {
-                'name': review.name,
-                'image': review.image,
-                'rating': review.rating,
-                'date': review.date,
-                'description': review.description,
+      'productName': entity.productName,
+      'productPrice': entity.productPrice,
+      'productCode': entity.productCode,
+      'productDescription': entity.productDescription,
+      'isFeatured': entity.isFeatured,
+      'imageUrl': entity.imageUrl,
+      'expiryDateMonths': entity.expiryDateMonths,
+      'calorieDensity': entity.calorieDensity, // Keep original name
+      'unitAmount': entity.unitAmount, // Now int type
+      'productRating': entity.productRating,
+      'ratingCount': entity.ratingCount,
+      'isOrganic': entity.isOrganic,
+      'reviews': entity.reviews
+          .map((e) => {
+                'name': e.name,
+                'image': e.image,
+                'rating': e.rating,
+                'date': e.date,
+                'description': e.description,
               })
           .toList(),
+      'sellingCount': 0, // Default value for new products
     };
   }
 }

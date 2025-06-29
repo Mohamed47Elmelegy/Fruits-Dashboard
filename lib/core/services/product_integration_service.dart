@@ -3,21 +3,40 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import '../constants/firebase_collections.dart';
 import '../constants/constants.dart';
+import 'supabase_init_service.dart';
 
 class ProductIntegrationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final SupabaseClient _supabase = Supabase.instance.client;
+  SupabaseClient? _supabaseClient;
+
+  // Constructor - no Supabase access here
+  ProductIntegrationService();
+
+  // Get Supabase client with lazy initialization
+  SupabaseClient get _supabase {
+    if (_supabaseClient == null) {
+      _supabaseClient = SupabaseInitService.getClient();
+    }
+    return _supabaseClient!;
+  }
 
   /// Add new product from admin dashboard
   Future<String> addProduct(
       Map<String, dynamic> productData, File? imageFile) async {
     try {
+      print('🚀 Starting to add product...');
+      print('📦 Product data: $productData');
+
       String? imageUrl;
 
       // Upload image if provided
       if (imageFile != null) {
+        print('📸 Uploading image...');
         imageUrl =
             await _uploadProductImage(imageFile, productData['productCode']);
+        print('✅ Image uploaded successfully: $imageUrl');
+      } else {
+        print('ℹ️ No image provided');
       }
 
       // Add image URL to product data
@@ -30,14 +49,20 @@ class ProductIntegrationService {
       productData['updatedAt'] = FieldValue.serverTimestamp();
       productData['isActive'] = true;
 
+      print(
+          '🔥 Adding to Firestore collection: ${FirebaseCollections.products}');
+
       // Add to Firestore
       final docRef = await _firestore
           .collection(FirebaseCollections.products)
           .add(productData);
 
+      print('✅ Product added successfully with ID: ${docRef.id}');
       return docRef.id;
     } catch (e) {
-      print('Error adding product: $e');
+      print('❌ Error adding product: $e');
+      print('🔍 Error type: ${e.runtimeType}');
+      print('📋 Product data that failed: $productData');
       rethrow;
     }
   }
@@ -231,12 +256,32 @@ class ProductIntegrationService {
           .orderBy('createdAt', descending: true)
           .get();
 
-      return querySnapshot.docs
-          .map((doc) => {
-                'id': doc.id,
-                ...doc.data(),
-              })
-          .toList();
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        // Handle field mapping from Firebase to our expected format
+        return {
+          'id': doc.id,
+          'productName': data['productName'],
+          'productPrice': data['productPrice'],
+          'productCode': data['productCode'],
+          'productDescription': data['productDescription'],
+          'isFeatured': data['isFeatured'] ?? false,
+          'imageUrl': data['imageUrl'],
+          'expiryDateMonths': data['expiryDateMonths'],
+          'calorieDensity': data['calories'] ??
+              data['calorieDensity'], // Handle both field names
+          'unitAmount':
+              data['unitAmount']?.toString() ?? '0', // Convert back to string
+          'productRating': data['productRating'] ?? 0,
+          'ratingCount': data['ratingCount'] ?? 0,
+          'isOrganic': data['isOrganic'] ?? false,
+          'reviews': data['reviews'] ?? [],
+          'sellingCount': data['sellingCount'] ?? 0,
+          'createdAt': data['createdAt'],
+          'updatedAt': data['updatedAt'],
+          'isActive': data['isActive'] ?? true,
+        };
+      }).toList();
     } catch (e) {
       print('Error getting all products: $e');
       rethrow;

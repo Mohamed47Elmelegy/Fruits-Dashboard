@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/proudcuts_entity.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/repos/add_proudcuts/enhanced_product_repo.dart';
+import '../repos/product_repository.dart';
 import 'dart:io';
 
 class UpdateProductUseCase {
-  final EnhancedProductRepo _productRepo;
+  final ProductRepository _productRepo;
 
   UpdateProductUseCase(this._productRepo);
 

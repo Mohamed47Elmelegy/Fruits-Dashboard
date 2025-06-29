@@ -3,6 +3,7 @@ import 'package:furute_app_dashbord/Features/DashBord/Presentation/view/dashbord
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/view/add_products_view.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/view/enhanced_products_page.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/enhanced_add_product_form.dart';
+import 'package:furute_app_dashbord/Features/Orders/presentation/view/orders_view.dart';
 import 'package:furute_app_dashbord/main.dart';
 
 import '../../Features/Splash/view/splash_view.dart';
@@ -30,6 +31,8 @@ class Routes {
         );
       case PageRoutesName.home:
         return MaterialPageRoute(builder: (context) => const DashbordView());
+      case PageRoutesName.orders:
+        return MaterialPageRoute(builder: (context) => const OrdersView());
       case PageRoutesName.ordersView:
         return MaterialPageRoute(builder: (context) => const DashbordView());
       case PageRoutesName.orderTracking:

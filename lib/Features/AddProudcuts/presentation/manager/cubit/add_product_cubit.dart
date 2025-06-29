@@ -27,8 +27,22 @@ class AddProductCubit extends Cubit<AddProductState> {
         );
       },
       (url) async {
-        addProductsEntity.imageUrl = url;
-        var result = await addProductsRepo.addPrducts(addProductsEntity);
+        final updatedProduct = ProductsEntity(
+          productName: addProductsEntity.productName,
+          productPrice: addProductsEntity.productPrice,
+          productCode: addProductsEntity.productCode,
+          productDescription: addProductsEntity.productDescription,
+          isFeatured: addProductsEntity.isFeatured,
+          imageUrl: url,
+          expiryDateMonths: addProductsEntity.expiryDateMonths,
+          calorieDensity: addProductsEntity.calorieDensity,
+          unitAmount: addProductsEntity.unitAmount,
+          productRating: addProductsEntity.productRating,
+          ratingCount: addProductsEntity.ratingCount,
+          isOrganic: addProductsEntity.isOrganic,
+          reviews: addProductsEntity.reviews,
+        );
+        var result = await addProductsRepo.addPrducts(updatedProduct);
         result.fold(
           (f) {
             emit(
