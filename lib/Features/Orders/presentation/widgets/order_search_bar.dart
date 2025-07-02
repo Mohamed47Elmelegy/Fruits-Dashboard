@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/application_theme_manager.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
 class OrderSearchBar extends StatelessWidget {
@@ -16,7 +15,7 @@ class OrderSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomTextField(
       controller: controller,
-      hint: 'Search by customer name or order ID...',
+      hint: 'البحث باسم العميل أو رقم الطلب...',
       prefixIcon: const Icon(Icons.search),
       onChanged: onChanged,
     );

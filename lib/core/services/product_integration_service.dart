@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
+import '../config/ansicolor.dart';
 import '../constants/firebase_collections.dart';
 import '../constants/constants.dart';
 import 'supabase_init_service.dart';
@@ -15,6 +18,7 @@ class ProductIntegrationService {
   // Get Supabase client with lazy initialization
   SupabaseClient get _supabase {
     if (_supabaseClient == null) {
+      log(DebugConsoleMessages.info('Initializing Supabase client'));
       _supabaseClient = SupabaseInitService.getClient();
     }
     return _supabaseClient!;
@@ -24,19 +28,20 @@ class ProductIntegrationService {
   Future<String> addProduct(
       Map<String, dynamic> productData, File? imageFile) async {
     try {
-      print('🚀 Starting to add product...');
-      print('📦 Product data: $productData');
+      log(DebugConsoleMessages.info('Starting to add product...'));
+      log(DebugConsoleMessages.info('📦 Product data: $productData'));
 
       String? imageUrl;
 
       // Upload image if provided
       if (imageFile != null) {
-        print('📸 Uploading image...');
+        log(DebugConsoleMessages.info('📸 Uploading image...'));
         imageUrl =
             await _uploadProductImage(imageFile, productData['productCode']);
-        print('✅ Image uploaded successfully: $imageUrl');
+        log(DebugConsoleMessages.success(
+            '✅ Image uploaded successfully: $imageUrl'));
       } else {
-        print('ℹ️ No image provided');
+        log(DebugConsoleMessages.info('ℹ️ No image provided'));
       }
 
       // Add image URL to product data
@@ -49,20 +54,22 @@ class ProductIntegrationService {
       productData['updatedAt'] = FieldValue.serverTimestamp();
       productData['isActive'] = true;
 
-      print(
-          '🔥 Adding to Firestore collection: ${FirebaseCollections.products}');
+      log(DebugConsoleMessages.info(
+          '🔥 Adding to Firestore collection: ${FirebaseCollections.products}'));
 
       // Add to Firestore
       final docRef = await _firestore
           .collection(FirebaseCollections.products)
           .add(productData);
 
-      print('✅ Product added successfully with ID: ${docRef.id}');
+      log(DebugConsoleMessages.success(
+          '✅ Product added successfully with ID: ${docRef.id}'));
       return docRef.id;
     } catch (e) {
-      print('❌ Error adding product: $e');
-      print('🔍 Error type: ${e.runtimeType}');
-      print('📋 Product data that failed: $productData');
+      log(DebugConsoleMessages.error('❌ Error adding product: $e'));
+      log(DebugConsoleMessages.info('🔍 Error type: ${e.runtimeType}'));
+      log(DebugConsoleMessages.info(
+          '📋 Product data that failed: $productData'));
       rethrow;
     }
   }
@@ -87,14 +94,27 @@ class ProductIntegrationService {
           .doc(productId)
           .update(productData);
     } catch (e) {
-      print('Error updating product: $e');
+      log(DebugConsoleMessages.error('Error updating product: $e'));
       rethrow;
     }
   }
 
-  /// Delete product
+  /// Delete product (Soft Delete - mark as inactive)
   Future<void> deleteProduct(String productId) async {
     try {
+      log(DebugConsoleMessages.info(
+          '🗑️ Starting to soft delete product with ID: $productId'));
+
+      // First check if product exists
+      final doc = await _firestore
+          .collection(FirebaseCollections.products)
+          .doc(productId)
+          .get();
+
+      if (!doc.exists) {
+        throw Exception('Product not found with ID: $productId');
+      }
+
       // Soft delete - mark as inactive
       await _firestore
           .collection(FirebaseCollections.products)
@@ -102,9 +122,43 @@ class ProductIntegrationService {
           .update({
         'isActive': false,
         'deletedAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      log(DebugConsoleMessages.success(
+          '✅ Product soft deleted successfully: $productId'));
     } catch (e) {
-      print('Error deleting product: $e');
+      log(DebugConsoleMessages.error('❌ Error soft deleting product: $e'));
+      rethrow;
+    }
+  }
+
+  /// Hard delete product (completely remove from Firebase)
+  Future<void> hardDeleteProduct(String productId) async {
+    try {
+      log(DebugConsoleMessages.info(
+          '🗑️ Starting to hard delete product with ID: $productId'));
+
+      // First check if product exists
+      final doc = await _firestore
+          .collection(FirebaseCollections.products)
+          .doc(productId)
+          .get();
+
+      if (!doc.exists) {
+        throw Exception('Product not found with ID: $productId');
+      }
+
+      // Hard delete - completely remove the document
+      await _firestore
+          .collection(FirebaseCollections.products)
+          .doc(productId)
+          .delete();
+
+      log(DebugConsoleMessages.success(
+          '✅ Product hard deleted successfully: $productId'));
+    } catch (e) {
+      log(DebugConsoleMessages.error('❌ Error hard deleting product: $e'));
       rethrow;
     }
   }
@@ -112,20 +166,34 @@ class ProductIntegrationService {
   /// Get all active products for customer app
   Future<List<Map<String, dynamic>>> getActiveProducts() async {
     try {
+      // Get products without ordering to avoid index requirement
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.products)
           .where('isActive', isEqualTo: true)
-          .orderBy('createdAt', descending: true)
           .get();
 
-      return querySnapshot.docs
+      final products = querySnapshot.docs
           .map((doc) => {
                 'id': doc.id,
                 ...doc.data(),
               })
           .toList();
+
+      // Sort by createdAt in descending order (newest first)
+      products.sort((a, b) {
+        final aCreatedAt = a['createdAt'] as Timestamp?;
+        final bCreatedAt = b['createdAt'] as Timestamp?;
+
+        if (aCreatedAt == null && bCreatedAt == null) return 0;
+        if (aCreatedAt == null) return 1;
+        if (bCreatedAt == null) return -1;
+
+        return bCreatedAt.compareTo(aCreatedAt); // Descending order
+      });
+
+      return products;
     } catch (e) {
-      print('Error getting active products: $e');
+      log(DebugConsoleMessages.error('Error getting active products: $e'));
       rethrow;
     }
   }
@@ -133,22 +201,35 @@ class ProductIntegrationService {
   /// Get featured products
   Future<List<Map<String, dynamic>>> getFeaturedProducts() async {
     try {
+      // Get featured products without ordering to avoid index requirement
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.products)
           .where('isActive', isEqualTo: true)
           .where('isFeatured', isEqualTo: true)
-          .orderBy('sellingCount', descending: true)
-          .limit(10)
           .get();
 
-      return querySnapshot.docs
+      final products = querySnapshot.docs
           .map((doc) => {
                 'id': doc.id,
                 ...doc.data(),
               })
           .toList();
+
+      // Sort by sellingCount in descending order and limit to 10
+      products.sort((a, b) {
+        final aSellingCount = a['sellingCount'] as int? ?? 0;
+        final bSellingCount = b['sellingCount'] as int? ?? 0;
+        return bSellingCount.compareTo(aSellingCount); // Descending order
+      });
+
+      // Limit to 10 products
+      if (products.length > 10) {
+        return products.take(10).toList();
+      }
+
+      return products;
     } catch (e) {
-      print('Error getting featured products: $e');
+      log(DebugConsoleMessages.error('Error getting featured products: $e'));
       rethrow;
     }
   }
@@ -157,21 +238,35 @@ class ProductIntegrationService {
   Future<List<Map<String, dynamic>>> getBestSellingProducts(
       {int limit = 10}) async {
     try {
+      // Get active products without ordering to avoid index requirement
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.products)
           .where('isActive', isEqualTo: true)
-          .orderBy('sellingCount', descending: true)
-          .limit(limit)
           .get();
 
-      return querySnapshot.docs
+      final products = querySnapshot.docs
           .map((doc) => {
                 'id': doc.id,
                 ...doc.data(),
               })
           .toList();
+
+      // Sort by sellingCount in descending order
+      products.sort((a, b) {
+        final aSellingCount = a['sellingCount'] as int? ?? 0;
+        final bSellingCount = b['sellingCount'] as int? ?? 0;
+        return bSellingCount.compareTo(aSellingCount); // Descending order
+      });
+
+      // Limit to specified number of products
+      if (products.length > limit) {
+        return products.take(limit).toList();
+      }
+
+      return products;
     } catch (e) {
-      print('Error getting best selling products: $e');
+      log(DebugConsoleMessages.error(
+          'Error getting best selling products: $e'));
       rethrow;
     }
   }
@@ -187,7 +282,8 @@ class ProductIntegrationService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error updating product selling count: $e');
+      log(DebugConsoleMessages.error(
+          'Error updating product selling count: $e'));
       rethrow;
     }
   }
@@ -211,7 +307,7 @@ class ProductIntegrationService {
 
       return imageUrl;
     } catch (e) {
-      print('Error uploading product image: $e');
+      log(DebugConsoleMessages.error('Error uploading product image: $e'));
       rethrow;
     }
   }
@@ -243,7 +339,7 @@ class ProductIntegrationService {
         return name.contains(searchQuery) || description.contains(searchQuery);
       }).toList();
     } catch (e) {
-      print('Error searching products: $e');
+      log(DebugConsoleMessages.error('Error searching products: $e'));
       rethrow;
     }
   }
@@ -251,12 +347,14 @@ class ProductIntegrationService {
   /// Get all products for admin dashboard
   Future<List<Map<String, dynamic>>> getAllProducts() async {
     try {
+      // First get all products without ordering to avoid index requirement
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.products)
-          .orderBy('createdAt', descending: true)
+          .where('isActive', isEqualTo: true) // Only get active products
           .get();
 
-      return querySnapshot.docs.map((doc) {
+      // Then sort them in memory
+      final products = querySnapshot.docs.map((doc) {
         final data = doc.data();
         // Handle field mapping from Firebase to our expected format
         return {
@@ -282,8 +380,22 @@ class ProductIntegrationService {
           'isActive': data['isActive'] ?? true,
         };
       }).toList();
+
+      // Sort by createdAt in descending order (newest first)
+      products.sort((a, b) {
+        final aCreatedAt = a['createdAt'] as Timestamp?;
+        final bCreatedAt = b['createdAt'] as Timestamp?;
+
+        if (aCreatedAt == null && bCreatedAt == null) return 0;
+        if (aCreatedAt == null) return 1;
+        if (bCreatedAt == null) return -1;
+
+        return bCreatedAt.compareTo(aCreatedAt); // Descending order
+      });
+
+      return products;
     } catch (e) {
-      print('Error getting all products: $e');
+      log(DebugConsoleMessages.error('Error getting all products: $e'));
       rethrow;
     }
   }
@@ -304,7 +416,7 @@ class ProductIntegrationService {
       }
       return null;
     } catch (e) {
-      print('Error getting product by ID: $e');
+      log(DebugConsoleMessages.error('Error getting product by ID: $e'));
       rethrow;
     }
   }

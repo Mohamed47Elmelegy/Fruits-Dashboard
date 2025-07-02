@@ -3,6 +3,7 @@ import '../../Features/AddProudcuts/presentation/manager/enhanced_product_cubit.
 import '../../Features/AddProudcuts/domin/usecases/add_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/update_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/delete_product_usecase.dart';
+import '../../Features/AddProudcuts/domin/usecases/hard_delete_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/get_all_products_usecase.dart';
 import '../../Features/Orders/presentation/manager/order_cubit.dart';
 import '../../Features/Orders/domain/usecases/get_all_orders_usecase.dart';
@@ -20,6 +21,7 @@ class CubitFactory {
       addProductUseCase: _getIt<AddProductUseCase>(),
       updateProductUseCase: _getIt<UpdateProductUseCase>(),
       deleteProductUseCase: _getIt<DeleteProductUseCase>(),
+      hardDeleteProductUseCase: _getIt<HardDeleteProductUseCase>(),
       getAllProductsUseCase: _getIt<GetAllProductsUseCase>(),
     );
   }

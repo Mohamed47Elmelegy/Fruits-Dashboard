@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/application_theme_manager.dart';
 import '../../../../core/widgets/section_container.dart';
-import '../../../../core/widgets/custom_button.dart';
 import '../../domain/entity/order_entity.dart';
 import 'order_status_update_dialog.dart';
 
@@ -36,7 +35,7 @@ class OrderListItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Order #${order.displayOrderId}',
+                          'طلب #${order.displayOrderId}',
                           style: TextStyle(
                             fontSize: isSmallScreen ? 14 : 16,
                             fontWeight: FontWeight.bold,
@@ -70,24 +69,59 @@ class OrderListItem extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: CustomButton(
-                      text: 'تحديث الحالة',
-                      onPressed: () => _showStatusUpdateDialog(context),
-                      backgroundColor: ApplicationThemeManager.primaryColor,
-                      textColor: Colors.white,
+                    child: SizedBox(
                       height: isSmallScreen ? 50 : 40,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ApplicationThemeManager.primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () => _showStatusUpdateDialog(context),
+                        child: const Text('تحديث الحالة'),
+                      ),
                     ),
                   ),
                   SizedBox(width: isSmallScreen ? 8 : 12),
                   Expanded(
-                    child: CustomButton(
-                      text: 'عرض التفاصيل',
-                      onPressed: onViewDetails,
-                      backgroundColor: Colors.transparent,
-                      textColor: ApplicationThemeManager.primaryColor,
+                    child: SizedBox(
                       height: isSmallScreen ? 50 : 40,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: ApplicationThemeManager.primaryColor,
+                          side: BorderSide(
+                              color: ApplicationThemeManager.primaryColor,
+                              width: 2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: onViewDetails,
+                        child: const Text('عرض التفاصيل'),
+                      ),
                     ),
                   ),
+                  if (!order.isDelivered && !order.isCancelled) ...[
+                    SizedBox(width: isSmallScreen ? 8 : 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: isSmallScreen ? 50 : 40,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: () => _showCancelOrderDialog(context),
+                          child: const Text('إلغاء الطلب'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ],
@@ -106,12 +140,16 @@ class OrderListItem extends StatelessWidget {
         chipColor = Colors.orange;
         statusText = 'في الانتظار';
         break;
-      case 'processing':
+      case 'confirmed':
         chipColor = Colors.blue;
+        statusText = 'مؤكد';
+        break;
+      case 'processing':
+        chipColor = Colors.purple;
         statusText = 'قيد المعالجة';
         break;
       case 'shipped':
-        chipColor = Colors.purple;
+        chipColor = Colors.indigo;
         statusText = 'تم الشحن';
         break;
       case 'delivered':
@@ -121,6 +159,10 @@ class OrderListItem extends StatelessWidget {
       case 'cancelled':
         chipColor = Colors.red;
         statusText = 'ملغي';
+        break;
+      case 'refunded':
+        chipColor = Colors.grey;
+        statusText = 'مسترد';
         break;
       default:
         chipColor = Colors.grey;
@@ -151,15 +193,18 @@ class OrderListItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDetailRow('Date', order.displayDate, isSmallScreen),
+        _buildDetailRow('التاريخ', order.displayDate, isSmallScreen),
         _buildDetailRow(
-            'Items', '${order.products.length} products', isSmallScreen),
+            'المنتجات', '${order.products.length} منتج', isSmallScreen),
         _buildDetailRow(
-            'Total', '\$${order.total.toStringAsFixed(2)}', isSmallScreen),
+            'المجموع', '${order.total.toStringAsFixed(2)} ج.م', isSmallScreen),
         if (order.trackingNumber != null)
-          _buildDetailRow('Tracking', order.trackingNumber!, isSmallScreen),
+          _buildDetailRow('رقم التتبع', order.trackingNumber!, isSmallScreen),
         if (order.adminNotes != null && order.adminNotes!.isNotEmpty)
-          _buildDetailRow('Notes', order.adminNotes!, isSmallScreen),
+          _buildDetailRow('ملاحظات', order.adminNotes!, isSmallScreen),
+        if (order.lastUpdated != null)
+          _buildDetailRow(
+              'آخر تحديث', _formatDateTime(order.lastUpdated!), isSmallScreen),
       ],
     );
   }
@@ -199,12 +244,43 @@ class OrderListItem extends StatelessWidget {
     );
   }
 
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
   void _showStatusUpdateDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => OrderStatusUpdateDialog(
         currentStatus: order.status,
         onStatusUpdate: onStatusUpdate,
+      ),
+    );
+  }
+
+  void _showCancelOrderDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('إلغاء الطلب'),
+        content: const Text('هل أنت متأكد من إلغاء هذا الطلب؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              onStatusUpdate('cancelled', 'تم إلغاء الطلب بواسطة الإدارة');
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('تأكيد الإلغاء'),
+          ),
+        ],
       ),
     );
   }

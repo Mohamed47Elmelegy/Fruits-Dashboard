@@ -162,6 +162,9 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
   }
 
   void _showDeleteConfirmation(Map<String, dynamic> product) {
+    // احفظ الـ cubit قبل فتح الديالوج
+    final cubit = context.read<EnhancedProductCubit>();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -176,7 +179,7 @@ class _AddProductsViewBodyState extends State<AddProductsViewBody> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              context.read<EnhancedProductCubit>().deleteProduct(product['id']);
+              cubit.deleteProduct(product['id']);
             },
             style: TextButton.styleFrom(
               foregroundColor: ApplicationThemeManager.errorColor,

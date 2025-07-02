@@ -18,14 +18,14 @@ class OrderStatusFilter extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _buildFilterChip('all', 'All Orders', Icons.list),
+          _buildFilterChip('all', 'جميع الطلبات', Icons.list),
           const SizedBox(width: 8),
           ...OrderStatus.getAllStatuses().map((status) {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: _buildFilterChip(
                 status,
-                OrderStatus.getDisplayName(status),
+                _getStatusDisplayName(status),
                 _getStatusIcon(status),
               ),
             );
@@ -37,7 +37,7 @@ class OrderStatusFilter extends StatelessWidget {
 
   Widget _buildFilterChip(String status, String label, IconData icon) {
     final isSelected = selectedStatus == status;
-    
+
     return FilterChip(
       selected: isSelected,
       label: Row(
@@ -59,11 +59,32 @@ class OrderStatusFilter extends StatelessWidget {
       checkmarkColor: Colors.white,
       backgroundColor: Colors.grey[200],
       side: BorderSide(
-        color: isSelected 
-            ? ApplicationThemeManager.primaryColor 
+        color: isSelected
+            ? ApplicationThemeManager.primaryColor
             : Colors.grey[300]!,
       ),
     );
+  }
+
+  String _getStatusDisplayName(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'في الانتظار';
+      case 'confirmed':
+        return 'مؤكد';
+      case 'processing':
+        return 'قيد المعالجة';
+      case 'shipped':
+        return 'تم الشحن';
+      case 'delivered':
+        return 'تم التوصيل';
+      case 'cancelled':
+        return 'ملغي';
+      case 'refunded':
+        return 'مسترد';
+      default:
+        return 'غير معروف';
+    }
   }
 
   IconData _getStatusIcon(String status) {

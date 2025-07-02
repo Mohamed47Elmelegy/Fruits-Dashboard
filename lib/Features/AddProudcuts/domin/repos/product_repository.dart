@@ -9,5 +9,6 @@ abstract class ProductRepository {
   Future<Either<Failure, void>> updateProduct(
       String productId, ProductsEntity product, File? imageFile);
   Future<Either<Failure, void>> deleteProduct(String productId);
+  Future<Either<Failure, void>> hardDeleteProduct(String productId);
   Future<Either<Failure, List<Map<String, dynamic>>>> getAllProducts();
 }

@@ -16,6 +16,16 @@ class OrdersViewBody extends StatefulWidget {
 class _OrdersViewBodyState extends State<OrdersViewBody> {
   String _selectedStatus = 'all';
   final TextEditingController _searchController = TextEditingController();
+  DateFilter _selectedDateFilter = DateFilter.all;
+
+  @override
+  void initState() {
+    super.initState();
+    // تأكد من تحميل الطلبات عند فتح الصفحة لأول مرة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<OrderCubit>().loadAllOrders();
+    });
+  }
 
   @override
   void dispose() {
@@ -35,6 +45,13 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
     }
   }
 
+  void _onDateFilterChanged(DateFilter filter) {
+    setState(() {
+      _selectedDateFilter = filter;
+    });
+    context.read<OrderCubit>().setDateFilter(filter);
+  }
+
   void _onSearchChanged(String? query) {
     if (query != null && query.isNotEmpty) {
       context.read<OrderCubit>().searchOrders(query);
@@ -52,11 +69,20 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
     return Scaffold(
       backgroundColor: ApplicationThemeManager.backgroundColor,
       appBar: AppBar(
-        title: const Text('Order Management'),
+        title: const Text('إدارة الطلبات'),
         backgroundColor: ApplicationThemeManager.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<OrderCubit>().refreshAllData();
+            },
+            tooltip: 'تحديث البيانات',
+          ),
+        ],
       ),
       body: BlocConsumer<OrderCubit, OrderState>(
         listener: (context, state) {
@@ -65,32 +91,77 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.red,
+                duration: const Duration(seconds: 4),
+                action: SnackBarAction(
+                  label: 'إعادة المحاولة',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    if (_selectedStatus == 'all') {
+                      context.read<OrderCubit>().loadAllOrders();
+                    } else {
+                      context
+                          .read<OrderCubit>()
+                          .loadOrdersByStatus(_selectedStatus);
+                    }
+                  },
+                ),
+              ),
+            );
+          } else if (state is OrderUpdating) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('جاري تحديث حالة الطلب...'),
+                backgroundColor: Colors.blue,
+                duration: Duration(seconds: 2),
               ),
             );
           }
         },
         builder: (context, state) {
-          return Column(
-            children: [
-              // Statistics Section
-              const OrdersStatisticsSection(),
-
-              // Search and Filter Section
-              OrdersSearchFilterSection(
-                selectedStatus: _selectedStatus,
-                searchController: _searchController,
-                onStatusChanged: _onStatusFilterChanged,
-                onSearchChanged: _onSearchChanged,
-              ),
-
-              // Orders List Section
-              Expanded(
-                child: OrdersListSection(
-                  state: state,
-                  selectedStatus: _selectedStatus,
+          return RefreshIndicator(
+            onRefresh: () async {
+              if (_selectedStatus == 'all') {
+                await context.read<OrderCubit>().loadAllOrders();
+              } else {
+                await context
+                    .read<OrderCubit>()
+                    .loadOrdersByStatus(_selectedStatus);
+              }
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: OrdersStatisticsSection()),
+                SliverToBoxAdapter(
+                  child: OrdersSearchFilterSection(
+                    selectedStatus: _selectedStatus,
+                    searchController: _searchController,
+                    onStatusChanged: _onStatusFilterChanged,
+                    onSearchChanged: _onSearchChanged,
+                    selectedDateFilter: _selectedDateFilter,
+                    onDateFilterChanged: _onDateFilterChanged,
+                  ),
                 ),
-              ),
-            ],
+                if (state is OrderLoaded)
+                  OrdersListSection.sliver(
+                      orders: state.orders, selectedStatus: _selectedStatus)
+                else if (state is OrderFailure)
+                  SliverToBoxAdapter(
+                    child: Center(
+                        child: Text(state.message,
+                            style: const TextStyle(color: Colors.red))),
+                  )
+                else
+                  const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(
+                            color: ApplicationThemeManager.primaryColor),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),

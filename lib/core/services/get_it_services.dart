@@ -12,6 +12,7 @@ import '../services/order_management_service.dart';
 import '../../Features/AddProudcuts/domin/usecases/add_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/update_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/delete_product_usecase.dart';
+import '../../Features/AddProudcuts/domin/usecases/hard_delete_product_usecase.dart';
 import '../../Features/AddProudcuts/domin/usecases/get_all_products_usecase.dart';
 import '../../Features/AddProudcuts/domin/repos/product_repository.dart';
 import '../../Features/AddProudcuts/Data/repos/enhanced_product_repository.dart';
@@ -73,6 +74,10 @@ void setupGetit() {
 
     getIt.registerLazySingleton<DeleteProductUseCase>(
       () => DeleteProductUseCase(getIt<ProductRepository>()),
+    );
+
+    getIt.registerLazySingleton<HardDeleteProductUseCase>(
+      () => HardDeleteProductUseCase(getIt<ProductRepository>()),
     );
 
     getIt.registerLazySingleton<GetAllProductsUseCase>(
