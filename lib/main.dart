@@ -11,7 +11,6 @@ import 'core/services/bloc_observer_service.dart';
 import 'core/services/get_it_services.dart';
 import 'core/services/supabase_init_service.dart';
 import 'core/services/supabase_test_service.dart';
-import 'core/services/enhanced_firestore_service.dart';
 import 'core/services/initial_data_service.dart';
 import 'core/services/firebase_status_service.dart';
 import 'core/theme/application_theme_manager.dart';
@@ -60,11 +59,6 @@ void main() async {
 
     // Test Firebase connection
     await testFirebaseConnection();
-
-    // Initialize enhanced Firestore service
-    DebugConsoleMessages.info('📊 Initializing enhanced Firestore service...');
-    await EnhancedFirestoreService.initialize();
-    DebugConsoleMessages.success('✅ Enhanced Firestore service initialized');
 
     // Initialize Supabase using the service
     DebugConsoleMessages.info('🔄 Initializing Supabase...');

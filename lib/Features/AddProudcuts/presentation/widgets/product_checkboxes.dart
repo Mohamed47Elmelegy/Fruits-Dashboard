@@ -9,12 +9,12 @@ class ProductCheckboxes extends StatelessWidget {
   final Function(bool?) onOrganicChanged;
 
   const ProductCheckboxes({
-    Key? key,
+    super.key,
     required this.isFeatured,
     required this.isOrganic,
     required this.onFeaturedChanged,
     required this.onOrganicChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../config/ansicolor.dart';
 
 enum UserRole { customer, admin, unknown }
 
@@ -28,7 +32,7 @@ class UserRoleService {
 
       return UserRole.unknown;
     } catch (e) {
-      print('Error getting user role: $e');
+      log(DebugConsoleMessages.error('Error getting user role: $e'));
       return UserRole.unknown;
     }
   }
@@ -73,7 +77,7 @@ class UserRoleService {
         });
       }
     } catch (e) {
-      print('Error creating user profile: $e');
+      log(DebugConsoleMessages.error('Error creating user profile: $e'));
       rethrow;
     }
   }
@@ -84,7 +88,7 @@ class UserRoleService {
       final doc = await _firestore.collection('users').doc(uid).get();
       return doc.data();
     } catch (e) {
-      print('Error getting user profile: $e');
+      log(DebugConsoleMessages.error('Error getting user profile: $e'));
       return null;
     }
   }
@@ -97,7 +101,7 @@ class UserRoleService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error updating user profile: $e');
+      log(DebugConsoleMessages.error('Error updating user profile: $e'));
       rethrow;
     }
   }
@@ -108,7 +112,7 @@ class UserRoleService {
       await _firestore.collection('users').doc(uid).delete();
       await _firestore.collection('admins').doc(uid).delete();
     } catch (e) {
-      print('Error deleting user profile: $e');
+      log(DebugConsoleMessages.error('Error deleting user profile: $e'));
       rethrow;
     }
   }

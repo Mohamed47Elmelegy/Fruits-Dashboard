@@ -15,16 +15,13 @@ class ApplicationThemeManager {
     fontFamily: "Cairo",
     scaffoldBackgroundColor: backgroundColor,
     primaryColor: primaryColor,
-    colorScheme:const ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
-      surface: surfaceColor,
-      background: backgroundColor,
-      error: errorColor,
+      surface: backgroundColor,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: textPrimaryColor,
-      onBackground: textPrimaryColor,
       onError: Colors.white,
     ),
     appBarTheme: const AppBarTheme(

@@ -4,7 +4,6 @@ import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/view/add_
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/view/enhanced_products_page.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/presentation/widgets/enhanced_add_product_form.dart';
 import 'package:furute_app_dashbord/Features/Orders/presentation/view/orders_view.dart';
-import 'package:furute_app_dashbord/main.dart';
 
 import '../../Features/Splash/view/splash_view.dart';
 import 'page_routes_name.dart';

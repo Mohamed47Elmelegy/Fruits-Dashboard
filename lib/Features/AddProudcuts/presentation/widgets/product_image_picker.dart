@@ -8,10 +8,10 @@ class ProductImagePicker extends StatefulWidget {
   final Function(File) onImageSelected;
 
   const ProductImagePicker({
-    Key? key,
+    super.key,
     required this.selectedImage,
     required this.onImageSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductImagePicker> createState() => _ProductImagePickerState();
@@ -45,19 +45,23 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
     } catch (e) {
       // Handle the "already_active" error gracefully
       if (e.toString().contains('already_active')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please wait, image picker is already active'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please wait, image picker is already active'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error picking image: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error picking image: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } finally {
       setState(() {
@@ -73,7 +77,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -88,7 +92,8 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
             decoration: BoxDecoration(
               color: ApplicationThemeManager.surfaceColor,
               border: Border.all(
-                color: ApplicationThemeManager.primaryColor.withOpacity(0.3),
+                color:
+                    ApplicationThemeManager.primaryColor.withValues(alpha: 0.3),
                 width: 2,
                 style: BorderStyle.solid,
               ),
@@ -111,7 +116,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: ApplicationThemeManager.primaryColor
-                                .withOpacity(0.9),
+                                .withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: _isPickingImage
@@ -147,7 +152,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withValues(alpha: 0.7),
                               ],
                             ),
                           ),
@@ -179,9 +184,10 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          ApplicationThemeManager.primaryColor.withOpacity(0.1),
+                          ApplicationThemeManager.primaryColor
+                              .withValues(alpha: 0.1),
                           ApplicationThemeManager.secondaryColor
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                         ],
                       ),
                     ),
@@ -193,7 +199,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: ApplicationThemeManager.primaryColor
-                                .withOpacity(0.1),
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(50),
                           ),
                           child: _isPickingImage

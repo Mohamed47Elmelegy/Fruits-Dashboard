@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/config/ansicolor.dart';
 import '../../../../core/utils/navigation_helper.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/theme/application_theme_manager.dart';
@@ -197,7 +200,8 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
               height: 60,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: ApplicationThemeManager.primaryColor.withOpacity(0.1),
+                color:
+                    ApplicationThemeManager.primaryColor.withValues(alpha: 0.1),
               ),
               child: _buildProductImage(product),
             ),
@@ -312,7 +316,8 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
       return;
     }
 
-    print('🗑️ UI: Showing delete confirmation for product ID: $productId');
+    log(DebugConsoleMessages.info(
+        '🗑️ UI: Showing delete confirmation for product ID: $productId'));
 
     // احفظ الـ cubit قبل فتح الديالوج
     final cubit = context.read<EnhancedProductCubit>();
@@ -322,18 +327,18 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('تأكيد الحذف'),
-          content: Column(
+          content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('اختر نوع الحذف:'),
-              const SizedBox(height: 16),
-              const Text(
+              Text('اختر نوع الحذف:'),
+              SizedBox(height: 16),
+              Text(
                 '• الحذف الناعم: إخفاء المنتج من القائمة (يمكن استرجاعه)',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                 '• الحذف الكامل: حذف المنتج نهائياً من Firebase',
                 style: TextStyle(fontSize: 12, color: Colors.red),
               ),
@@ -342,15 +347,16 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
           actions: [
             TextButton(
               onPressed: () {
-                print('❌ UI: Delete cancelled by user');
+                log(DebugConsoleMessages.info(
+                    '❌ UI: Delete cancelled by user'));
                 Navigator.of(context).pop();
               },
               child: const Text('إلغاء'),
             ),
             TextButton(
               onPressed: () {
-                print(
-                    '✅ UI: User confirmed soft deletion for product ID: $productId');
+                log(DebugConsoleMessages.info(
+                    '✅ UI: User confirmed soft deletion for product ID: $productId'));
                 Navigator.of(context).pop();
                 cubit.deleteProduct(productId);
               },
@@ -359,8 +365,8 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
             ),
             TextButton(
               onPressed: () {
-                print(
-                    '✅ UI: User confirmed hard deletion for product ID: $productId');
+                log(DebugConsoleMessages.info(
+                    '✅ UI: User confirmed hard deletion for product ID: $productId'));
                 Navigator.of(context).pop();
                 cubit.hardDeleteProduct(productId);
               },
@@ -406,10 +412,10 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
   String _getProductId(dynamic product) {
     if (product['id'] != null) {
       final id = product['id'].toString();
-      print('🔍 UI: Found product ID: $id');
+      log(DebugConsoleMessages.info('🔍 UI: Found product ID: $id'));
       return id;
     } else {
-      print('⚠️ UI: Product ID is null or empty');
+      log(DebugConsoleMessages.info('⚠️ UI: Product ID is null or empty'));
       return '';
     }
   }

@@ -91,7 +91,7 @@ class OrderListItem extends StatelessWidget {
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: ApplicationThemeManager.primaryColor,
-                          side: BorderSide(
+                          side: const BorderSide(
                               color: ApplicationThemeManager.primaryColor,
                               width: 2),
                           shape: RoundedRectangleBorder(
@@ -172,7 +172,7 @@ class OrderListItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: chipColor.withOpacity(0.1),
+        color: chipColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: chipColor, width: 1),
       ),

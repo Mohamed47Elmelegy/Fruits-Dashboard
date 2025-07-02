@@ -10,14 +10,13 @@ import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 
 class AddProductsViewBody extends StatefulWidget {
-  const AddProductsViewBody({Key? key}) : super(key: key);
+  const AddProductsViewBody({super.key});
 
   @override
   State<AddProductsViewBody> createState() => _AddProductsViewBodyState();
 }
 
 class _AddProductsViewBodyState extends State<AddProductsViewBody> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   late String productName, productCode, productDescription;
   late num productPrice, calorieDensity, unitAmount, expiryDateMonths;

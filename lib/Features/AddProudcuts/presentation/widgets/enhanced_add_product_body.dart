@@ -19,10 +19,10 @@ class EnhancedAddProductBody extends StatefulWidget {
   final bool isLoading;
 
   const EnhancedAddProductBody({
-    Key? key,
+    super.key,
     this.productToEdit,
     required this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedAddProductBody> createState() => _EnhancedAddProductBodyState();
@@ -169,7 +169,7 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SectionHeader(
+                        const SectionHeader(
                           icon: Icons.description,
                           title: 'Product Details',
                         ),
@@ -195,7 +195,7 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SectionHeader(
+                        const SectionHeader(
                           icon: Icons.settings,
                           title: 'Product Options',
                         ),

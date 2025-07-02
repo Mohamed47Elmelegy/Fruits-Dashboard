@@ -20,7 +20,7 @@ class IsFeaturedCheckboxState extends State<IsFeaturedCheckbox> {
         color: ApplicationThemeManager.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: ApplicationThemeManager.primaryColor.withOpacity(0.2),
+          color: ApplicationThemeManager.primaryColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -29,10 +29,11 @@ class IsFeaturedCheckboxState extends State<IsFeaturedCheckbox> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: ApplicationThemeManager.warningColor.withOpacity(0.1),
+              color:
+                  ApplicationThemeManager.warningColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.star,
               color: ApplicationThemeManager.warningColor,
               size: 24,

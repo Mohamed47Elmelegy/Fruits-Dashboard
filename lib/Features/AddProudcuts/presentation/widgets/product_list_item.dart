@@ -7,11 +7,11 @@ class ProductListItem extends StatelessWidget {
   final VoidCallback onDelete;
 
   const ProductListItem({
-    Key? key,
+    super.key,
     required this.product,
     required this.onEdit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +32,14 @@ class ProductListItem extends StatelessWidget {
                         height: 40,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(
+                          return const Icon(
                             Icons.inventory_2,
                             color: Colors.white,
                           );
                         },
                       ),
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.inventory_2,
                       color: Colors.white,
                     ),
@@ -78,8 +78,9 @@ class ProductListItem extends StatelessWidget {
                 ),
                 if (product['isFeatured'] == true)
                   Container(
-                    margin: EdgeInsets.only(top: 4),
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    margin: const EdgeInsets.only(top: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.orange,
                       borderRadius: BorderRadius.circular(12),
@@ -101,12 +102,12 @@ class ProductListItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.edit, color: AppColors.green1_500),
+                  icon: const Icon(Icons.edit, color: AppColors.green1_500),
                   onPressed: onEdit,
                   tooltip: 'Edit',
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
                     _showDeleteConfirmation(context);
                   },
@@ -126,7 +127,7 @@ class ProductListItem extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Product'),
+          title: const Text('Delete Product'),
           content: Text(
             'Are you sure you want to delete "${product['productName']}"? This action cannot be undone.',
             maxLines: 3,
@@ -135,14 +136,14 @@ class ProductListItem extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 onDelete();
               },
-              child: Text(
+              child: const Text(
                 'Delete',
                 style: TextStyle(color: Colors.red),
               ),

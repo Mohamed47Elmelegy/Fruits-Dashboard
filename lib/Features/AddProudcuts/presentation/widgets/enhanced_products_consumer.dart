@@ -60,12 +60,7 @@ class _EnhancedProductsConsumerState extends State<EnhancedProductsConsumer> {
           if (mounted) {
             log(DebugConsoleMessages.info(
                 '🔄 Consumer: Reloading products after adding new product'));
-            // Add a small delay to ensure the user sees the success message
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (mounted) {
-                context.read<EnhancedProductCubit>().getAllProducts();
-              }
-            });
+            context.read<EnhancedProductCubit>().getAllProducts();
           }
         } else if (state is EnhancedProductUpdated) {
           SnackBarService.showSuccessMessage('تم تحديث المنتج بنجاح');
@@ -73,11 +68,7 @@ class _EnhancedProductsConsumerState extends State<EnhancedProductsConsumer> {
           if (mounted) {
             log(DebugConsoleMessages.info(
                 '🔄 Consumer: Reloading products after updating product'));
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (mounted) {
-                context.read<EnhancedProductCubit>().getAllProducts();
-              }
-            });
+            context.read<EnhancedProductCubit>().getAllProducts();
           }
         } else if (state is EnhancedProductDeleted) {
           SnackBarService.showSuccessMessage('تم حذف المنتج بنجاح');
@@ -85,11 +76,7 @@ class _EnhancedProductsConsumerState extends State<EnhancedProductsConsumer> {
           log(DebugConsoleMessages.info(
               '🔄 Consumer: Reloading products after deletion'));
           if (mounted) {
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (mounted) {
-                context.read<EnhancedProductCubit>().getAllProducts();
-              }
-            });
+            context.read<EnhancedProductCubit>().getAllProducts();
           }
         } else if (state is EnhancedProductFailure) {
           SnackBarService.showErrorMessage(state.message);

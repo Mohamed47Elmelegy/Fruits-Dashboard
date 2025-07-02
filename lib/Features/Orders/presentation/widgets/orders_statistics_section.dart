@@ -34,12 +34,12 @@ class _OrdersStatisticsSectionState extends State<OrdersStatisticsSection> {
 
         return Container(
           padding: const EdgeInsets.all(16),
-          color: ApplicationThemeManager.primaryColor.withOpacity(0.1),
+          color: ApplicationThemeManager.primaryColor.withValues(alpha: 0.1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Section Title
-              Text(
+              const Text(
                 'إحصائيات الطلبات',
                 style: TextStyle(
                   fontSize: 18,

@@ -135,9 +135,7 @@ class DashboardChoicesSection extends StatelessWidget {
                 subtitle: 'عرض الإحصائيات',
                 color: const Color(0xFF9C27B0),
                 isSmallScreen: isSmallScreen,
-                onTap: () {
-                  // TODO: Navigate to reports
-                },
+                onTap: () {},
               ),
             ),
             SizedBox(width: isSmallScreen ? 6 : 12),
@@ -148,9 +146,7 @@ class DashboardChoicesSection extends StatelessWidget {
                 subtitle: 'تكوين النظام',
                 color: const Color(0xFFFF9800),
                 isSmallScreen: isSmallScreen,
-                onTap: () {
-                  // TODO: Navigate to settings
-                },
+                onTap: () {},
               ),
             ),
           ],
@@ -180,7 +176,7 @@ class DashboardChoicesSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -193,7 +189,7 @@ class DashboardChoicesSection extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(

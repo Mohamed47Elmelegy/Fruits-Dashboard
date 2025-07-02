@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import '../../../../core/config/ansicolor.dart';
 import '../../domin/Entity/proudcuts_entity.dart';
-import '../../domin/Entity/reviews_entity.dart';
 import '../../domin/repos/product_repository.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/services/product_integration_service.dart';
@@ -69,6 +68,7 @@ class EnhancedProductRepository implements ProductRepository {
   }
 
   /// Hard delete product (completely remove from Firebase)
+  @override
   Future<Either<Failure, void>> hardDeleteProduct(String productId) async {
     try {
       log(DebugConsoleMessages.info(

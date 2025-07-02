@@ -9,8 +9,7 @@ import '../../../../core/widgets/custom_snackbar.dart';
 class EnhancedAddProductConsumer extends StatefulWidget {
   final Map<String, dynamic>? productToEdit;
 
-  const EnhancedAddProductConsumer({Key? key, this.productToEdit})
-      : super(key: key);
+  const EnhancedAddProductConsumer({super.key, this.productToEdit});
 
   @override
   State<EnhancedAddProductConsumer> createState() =>

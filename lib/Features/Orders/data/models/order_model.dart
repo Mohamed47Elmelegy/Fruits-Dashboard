@@ -196,6 +196,7 @@ class OrderStatusHistoryModel extends OrderStatusHistory {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'status': status,

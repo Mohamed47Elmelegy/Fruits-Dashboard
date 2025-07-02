@@ -20,7 +20,7 @@ class IsOrganicCheckboxState extends State<IsOrganicCheckbox> {
         color: ApplicationThemeManager.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: ApplicationThemeManager.primaryColor.withOpacity(0.2),
+          color: ApplicationThemeManager.primaryColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -29,10 +29,11 @@ class IsOrganicCheckboxState extends State<IsOrganicCheckbox> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: ApplicationThemeManager.secondaryColor.withOpacity(0.1),
+              color:
+                  ApplicationThemeManager.secondaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.eco,
               color: ApplicationThemeManager.secondaryColor,
               size: 24,

@@ -66,7 +66,7 @@ class FirebaseStatusService {
       });
 
       // Test read operation
-      final docSnapshot = await testDoc.get();
+      await testDoc.get();
 
       // Clean up
       await testDoc.delete();
@@ -208,7 +208,9 @@ class FirebaseStatusService {
       final config = status['app_configuration'] as Map<String, bool>;
       if (config['hasUser'] != true ||
           config['hasAdmin'] != true ||
-          config['hasSettings'] != true) return false;
+          config['hasSettings'] != true) {
+        return false;
+      }
 
       return true;
     } catch (e) {

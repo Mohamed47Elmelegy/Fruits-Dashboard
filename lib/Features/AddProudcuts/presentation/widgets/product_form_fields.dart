@@ -11,7 +11,7 @@ class ProductFormFields extends StatelessWidget {
   final TextEditingController unitAmountController;
 
   const ProductFormFields({
-    Key? key,
+    super.key,
     required this.productNameController,
     required this.productPriceController,
     required this.productCodeController,
@@ -19,7 +19,7 @@ class ProductFormFields extends StatelessWidget {
     required this.expiryDateMonthsController,
     required this.calorieDensityController,
     required this.unitAmountController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +168,7 @@ class ProductFormFields extends StatelessWidget {
         prefixIcon: Icon(icon, color: ApplicationThemeManager.primaryColor),
         prefixText: prefixText,
         suffixIcon: validator != null && validator(controller.text) != null
-            ? Icon(Icons.error, color: ApplicationThemeManager.errorColor)
+            ? const Icon(Icons.error, color: ApplicationThemeManager.errorColor)
             : null,
       ),
       validator: validator,

@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/proudcuts_entity.dart';
-import 'package:furute_app_dashbord/Features/AddProudcuts/domin/Entity/reviews_entity.dart';
 import '../../errors/failure.dart';
 import '../../services/product_integration_service.dart';
 import 'dart:io';

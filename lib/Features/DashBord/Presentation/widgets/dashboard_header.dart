@@ -21,7 +21,7 @@ class DashboardHeader extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 ApplicationThemeManager.primaryColor,
-                ApplicationThemeManager.primaryColor.withOpacity(0.8),
+                ApplicationThemeManager.primaryColor.withValues(alpha: 0.8),
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -55,7 +55,7 @@ class DashboardHeader extends StatelessWidget {
                           'إدارة متجر الفواكه والخضروات',
                           style: TextStyle(
                             fontSize: subtitleSize,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -68,7 +68,7 @@ class DashboardHeader extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(
@@ -101,7 +101,7 @@ class DashboardHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: isSmallScreen ? 14 : 16,
             fontWeight: FontWeight.w600,
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
           ),
         ),
         SizedBox(height: isSmallScreen ? 12 : 16),
@@ -152,10 +152,10 @@ class DashboardHeader extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 10 : 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -182,7 +182,7 @@ class DashboardHeader extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: isSmallScreen ? 9 : 12,
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
             ),
             textAlign: TextAlign.center,
             maxLines: 2,

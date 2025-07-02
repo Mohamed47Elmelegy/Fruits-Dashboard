@@ -54,15 +54,16 @@ class CustomCheckboxState extends State<CustomCheckbox> {
           border: Border.all(
             color: _isChecked
                 ? ApplicationThemeManager.primaryColor
-                : ApplicationThemeManager.textSecondaryColor.withOpacity(0.3),
+                : ApplicationThemeManager.textSecondaryColor
+                    .withValues(alpha: 0.3),
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(6),
           boxShadow: _isChecked
               ? [
                   BoxShadow(
-                    color:
-                        ApplicationThemeManager.primaryColor.withOpacity(0.3),
+                    color: ApplicationThemeManager.primaryColor
+                        .withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

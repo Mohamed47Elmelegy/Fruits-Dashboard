@@ -1,4 +1,3 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants/constants.dart';
 import '../config/ansicolor.dart';
 import 'supabase_init_service.dart';
@@ -42,7 +41,7 @@ class SupabaseTestService {
     try {
       DebugConsoleMessages.info('🧪 Testing Supabase client access...');
 
-      final client = SupabaseInitService.getClient();
+      SupabaseInitService.getClient();
 
       // Simple test - just check if we can access the client
       DebugConsoleMessages.success('✅ Supabase client accessible');

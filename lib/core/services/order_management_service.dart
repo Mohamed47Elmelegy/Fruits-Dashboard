@@ -24,7 +24,7 @@ class OrderManagementService {
               })
           .toList();
     } catch (e) {
-      print('Error getting all orders: $e');
+      log(DebugConsoleMessages.error('Error getting all orders: $e'));
       rethrow;
     }
   }
@@ -45,7 +45,7 @@ class OrderManagementService {
               })
           .toList();
     } catch (e) {
-      print('Error getting orders by status: $e');
+      log(DebugConsoleMessages.error('Error getting orders by status: $e'));
       rethrow;
     }
   }
@@ -194,7 +194,7 @@ class OrderManagementService {
       // Calculate total revenue
       final totalRevenue = allOrders
           .where((order) => order['status'] == OrderStatus.delivered)
-          .fold<double>(0, (sum, order) => sum + (order['total'] ?? 0));
+          .fold<double>(0, (acc, order) => acc + (order['total'] ?? 0));
 
       return {
         'totalOrders': totalOrders,

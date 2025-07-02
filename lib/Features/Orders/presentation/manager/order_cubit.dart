@@ -176,7 +176,6 @@ class OrderCubit extends Cubit<OrderState> {
           return date.year == now.year && date.month == now.month;
         }).toList();
       case DateFilter.all:
-      default:
         return orders;
     }
   }

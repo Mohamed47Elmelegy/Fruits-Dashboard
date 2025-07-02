@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/application_theme_manager.dart';
 
 class DashboardChoiceCard extends StatelessWidget {
   final String title;
@@ -45,13 +44,13 @@ class DashboardChoiceCard extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: [
                   backgroundColor,
-                  backgroundColor.withOpacity(0.8),
+                  backgroundColor.withValues(alpha: 0.8),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -68,7 +67,7 @@ class DashboardChoiceCard extends StatelessWidget {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -80,7 +79,7 @@ class DashboardChoiceCard extends StatelessWidget {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -99,7 +98,7 @@ class DashboardChoiceCard extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.2),
+                              color: color.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Icon(
@@ -156,7 +155,7 @@ class DashboardChoiceCard extends StatelessWidget {
                               subtitle,
                               style: TextStyle(
                                 fontSize: subtitleSize,
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -174,7 +173,7 @@ class DashboardChoiceCard extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(isSmallScreen ? 4 : 5),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(

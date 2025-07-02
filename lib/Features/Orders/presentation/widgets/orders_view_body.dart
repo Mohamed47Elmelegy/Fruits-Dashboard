@@ -130,7 +130,7 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
             },
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(child: OrdersStatisticsSection()),
+                const SliverToBoxAdapter(child: OrdersStatisticsSection()),
                 SliverToBoxAdapter(
                   child: OrdersSearchFilterSection(
                     selectedStatus: _selectedStatus,
