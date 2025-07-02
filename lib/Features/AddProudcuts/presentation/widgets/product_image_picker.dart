@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../core/theme/application_theme_manager.dart';
 
-class ProductImagePicker extends StatelessWidget {
+class ProductImagePicker extends StatefulWidget {
   final File? selectedImage;
   final Function(File) onImageSelected;
 
@@ -13,17 +13,56 @@ class ProductImagePicker extends StatelessWidget {
     required this.onImageSelected,
   }) : super(key: key);
 
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1024,
-      maxHeight: 1024,
-      imageQuality: 85,
-    );
+  @override
+  State<ProductImagePicker> createState() => _ProductImagePickerState();
+}
 
-    if (image != null) {
-      onImageSelected(File(image.path));
+class _ProductImagePickerState extends State<ProductImagePicker> {
+  bool _isPickingImage = false;
+
+  Future<void> _pickImage() async {
+    // Prevent multiple simultaneous image picker calls
+    if (_isPickingImage) {
+      return;
+    }
+
+    setState(() {
+      _isPickingImage = true;
+    });
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        widget.onImageSelected(File(image.path));
+      }
+    } catch (e) {
+      // Handle the "already_active" error gracefully
+      if (e.toString().contains('already_active')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please wait, image picker is already active'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isPickingImage = false;
+      });
     }
   }
 
@@ -43,7 +82,7 @@ class ProductImagePicker extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: GestureDetector(
-          onTap: _pickImage,
+          onTap: _isPickingImage ? null : _pickImage,
           child: Container(
             height: 200,
             decoration: BoxDecoration(
@@ -54,17 +93,17 @@ class ProductImagePicker extends StatelessWidget {
                 style: BorderStyle.solid,
               ),
             ),
-            child: selectedImage != null
+            child: widget.selectedImage != null
                 ? Stack(
                     children: [
                       // Selected Image
                       Image.file(
-                        selectedImage!,
+                        widget.selectedImage!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
                       ),
-                      // Overlay with edit icon
+                      // Overlay with edit icon or loading indicator
                       Positioned(
                         top: 8,
                         right: 8,
@@ -75,11 +114,21 @@ class ProductImagePicker extends StatelessWidget {
                                 .withOpacity(0.9),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          child: _isPickingImage
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                         ),
                       ),
                       // Image info overlay
@@ -102,14 +151,14 @@ class ProductImagePicker extends StatelessWidget {
                               ],
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             children: [
                               Icon(
                                 Icons.photo,
                                 color: Colors.white,
                                 size: 16,
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               Text(
                                 'Tap to change image',
                                 style: TextStyle(
@@ -147,11 +196,21 @@ class ProductImagePicker extends StatelessWidget {
                                 .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: Icon(
-                            Icons.add_photo_alternate,
-                            size: 40,
-                            color: ApplicationThemeManager.primaryColor,
-                          ),
+                          child: _isPickingImage
+                              ? const SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        ApplicationThemeManager.primaryColor),
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.add_photo_alternate,
+                                  size: 40,
+                                  color: ApplicationThemeManager.primaryColor,
+                                ),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -183,7 +242,7 @@ class ProductImagePicker extends StatelessWidget {
                             color: ApplicationThemeManager.primaryColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
@@ -191,7 +250,7 @@ class ProductImagePicker extends StatelessWidget {
                                 color: Colors.white,
                                 size: 14,
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: 6),
                               Text(
                                 'Upload Image',
                                 style: TextStyle(

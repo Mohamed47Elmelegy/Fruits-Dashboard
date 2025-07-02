@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../config/ansicolor.dart';
 import '../constants/firebase_collections.dart';
 
 class OrderManagementService {
@@ -63,7 +66,7 @@ class OrderManagementService {
       }
       return null;
     } catch (e) {
-      print('Error getting order by ID: $e');
+      log(DebugConsoleMessages.error('Error getting order by ID: $e'));
       rethrow;
     }
   }
@@ -98,7 +101,7 @@ class OrderManagementService {
         'assignedAdminId': currentUser.uid,
       });
     } catch (e) {
-      print('Error updating order status: $e');
+      log(DebugConsoleMessages.error('Error updating order status: $e'));
       rethrow;
     }
   }
@@ -118,7 +121,7 @@ class OrderManagementService {
         'assignedAdminId': currentUser.uid,
       });
     } catch (e) {
-      print('Error adding order notes: $e');
+      log(DebugConsoleMessages.error('Error adding order notes: $e'));
       rethrow;
     }
   }
@@ -134,7 +137,7 @@ class OrderManagementService {
         'lastUpdated': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error assigning order to admin: $e');
+      log(DebugConsoleMessages.error('Error assigning order to admin: $e'));
       rethrow;
     }
   }
@@ -158,7 +161,7 @@ class OrderManagementService {
               })
           .toList();
     } catch (e) {
-      print('Error getting assigned orders: $e');
+      log(DebugConsoleMessages.error('Error getting assigned orders: $e'));
       rethrow;
     }
   }
@@ -204,7 +207,7 @@ class OrderManagementService {
         'totalRevenue': totalRevenue,
       };
     } catch (e) {
-      print('Error getting order statistics: $e');
+      log(DebugConsoleMessages.error('Error getting order statistics: $e'));
       rethrow;
     }
   }
@@ -212,7 +215,7 @@ class OrderManagementService {
   /// Get recent orders (last 7 days)
   Future<List<Map<String, dynamic>>> getRecentOrders() async {
     try {
-      final sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
+      final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
 
       final querySnapshot = await _firestore
           .collection(FirebaseCollections.orders)
@@ -229,7 +232,7 @@ class OrderManagementService {
               })
           .toList();
     } catch (e) {
-      print('Error getting recent orders: $e');
+      log(DebugConsoleMessages.error('Error getting recent orders: $e'));
       rethrow;
     }
   }
@@ -249,7 +252,7 @@ class OrderManagementService {
             orderId.contains(searchQuery);
       }).toList();
     } catch (e) {
-      print('Error searching orders: $e');
+      log(DebugConsoleMessages.error('Error searching orders: $e'));
       rethrow;
     }
   }
@@ -286,7 +289,7 @@ class OrderManagementService {
         'cancelledBy': currentUser.uid,
       });
     } catch (e) {
-      print('Error cancelling order: $e');
+      log(DebugConsoleMessages.error('Error cancelling order: $e'));
       rethrow;
     }
   }

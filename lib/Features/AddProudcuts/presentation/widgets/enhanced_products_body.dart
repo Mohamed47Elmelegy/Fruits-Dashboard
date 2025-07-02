@@ -23,22 +23,54 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
         } else if (state is EnhancedProductsLoaded) {
           return _buildProductsList(state.products);
         } else if (state is EnhancedProductFailure) {
-          return ErrorState(
-            title: 'خطأ في تحميل المنتجات',
-            message: state.message,
-            retryText: 'إعادة المحاولة',
-            onRetry: () {
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Refresh products when user pulls down during error
               context.read<EnhancedProductCubit>().getAllProducts();
             },
+            color: ApplicationThemeManager.primaryColor,
+            backgroundColor: Colors.white,
+            strokeWidth: 3.0,
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: ErrorState(
+                    title: 'خطأ في تحميل المنتجات',
+                    message: state.message,
+                    retryText: 'إعادة المحاولة',
+                    onRetry: () {
+                      context.read<EnhancedProductCubit>().getAllProducts();
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
         } else {
-          return EmptyState(
-            icon: Icons.inventory_2_outlined,
-            title: 'لا توجد منتجات بعد',
-            message: 'ابدأ بإضافة أول منتج إلى الكتالوج',
-            buttonText: 'إضافة منتج',
-            onButtonPressed: () => NavigationHelper.goToAddProduct(),
-            buttonIcon: Icons.add,
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Refresh products when user pulls down during empty state
+              context.read<EnhancedProductCubit>().getAllProducts();
+            },
+            color: ApplicationThemeManager.primaryColor,
+            backgroundColor: Colors.white,
+            strokeWidth: 3.0,
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: EmptyState(
+                    icon: Icons.inventory_2_outlined,
+                    title: 'لا توجد منتجات بعد',
+                    message: 'ابدأ بإضافة أول منتج إلى الكتالوج',
+                    buttonText: 'إضافة منتج',
+                    onButtonPressed: () => NavigationHelper.goToAddProduct(),
+                    buttonIcon: Icons.add,
+                  ),
+                ),
+              ],
+            ),
           );
         }
       },
@@ -46,19 +78,35 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
   }
 
   Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return RefreshIndicator(
+      onRefresh: () async {
+        // Refresh products when user pulls down during loading
+        context.read<EnhancedProductCubit>().getAllProducts();
+      },
+      color: ApplicationThemeManager.primaryColor,
+      backgroundColor: Colors.white,
+      strokeWidth: 3.0,
+      child: ListView(
         children: [
-          CircularProgressIndicator(
-            color: ApplicationThemeManager.primaryColor,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'جاري تحميل المنتجات...',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: ApplicationThemeManager.primaryColor,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'جاري تحميل المنتجات...',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -108,15 +156,24 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
             ],
           ),
         ),
-        // Products list
+        // Products list with RefreshIndicator
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return _buildProductCard(context, product, index);
+          child: RefreshIndicator(
+            onRefresh: () async {
+              // Refresh products when user pulls down
+              context.read<EnhancedProductCubit>().getAllProducts();
             },
+            color: ApplicationThemeManager.primaryColor,
+            backgroundColor: Colors.white,
+            strokeWidth: 3.0,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return _buildProductCard(context, product, index);
+              },
+            ),
           ),
         ),
       ],
@@ -162,7 +219,7 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
                   const SizedBox(height: 4),
                   Text(
                     'السعر: ${_getProductPrice(product)} ج.م',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: ApplicationThemeManager.primaryColor,
                       fontWeight: FontWeight.w600,
@@ -227,7 +284,7 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
           product['imageUrl'].toString(),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return Icon(
+            return const Icon(
               Icons.image,
               color: ApplicationThemeManager.primaryColor,
               size: 30,
@@ -236,7 +293,7 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
         ),
       );
     } else {
-      return Icon(
+      return const Icon(
         Icons.image,
         color: ApplicationThemeManager.primaryColor,
         size: 30,
@@ -255,25 +312,60 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
       return;
     }
 
+    print('🗑️ UI: Showing delete confirmation for product ID: $productId');
+
+    // احفظ الـ cubit قبل فتح الديالوج
+    final cubit = context.read<EnhancedProductCubit>();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('تأكيد الحذف'),
-          content: const Text('هل أنت متأكد من حذف هذا المنتج؟'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('اختر نوع الحذف:'),
+              const SizedBox(height: 16),
+              const Text(
+                '• الحذف الناعم: إخفاء المنتج من القائمة (يمكن استرجاعه)',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '• الحذف الكامل: حذف المنتج نهائياً من Firebase',
+                style: TextStyle(fontSize: 12, color: Colors.red),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                print('❌ UI: Delete cancelled by user');
+                Navigator.of(context).pop();
+              },
               child: const Text('إلغاء'),
             ),
             TextButton(
               onPressed: () {
+                print(
+                    '✅ UI: User confirmed soft deletion for product ID: $productId');
                 Navigator.of(context).pop();
-                final cubit = context.read<EnhancedProductCubit>();
                 cubit.deleteProduct(productId);
               },
+              style: TextButton.styleFrom(foregroundColor: Colors.orange),
+              child: const Text('حذف ناعم'),
+            ),
+            TextButton(
+              onPressed: () {
+                print(
+                    '✅ UI: User confirmed hard deletion for product ID: $productId');
+                Navigator.of(context).pop();
+                cubit.hardDeleteProduct(productId);
+              },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('حذف'),
+              child: const Text('حذف كامل'),
             ),
           ],
         );
@@ -313,8 +405,11 @@ class _EnhancedProductsBodyState extends State<EnhancedProductsBody> {
 
   String _getProductId(dynamic product) {
     if (product['id'] != null) {
-      return product['id'].toString();
+      final id = product['id'].toString();
+      print('🔍 UI: Found product ID: $id');
+      return id;
     } else {
+      print('⚠️ UI: Product ID is null or empty');
       return '';
     }
   }

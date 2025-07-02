@@ -29,9 +29,15 @@ class OrderModel extends OrderEntity {
     String createdAtString;
     if (json['createdAtTimestamp'] != null) {
       // Use createdAtTimestamp if available (number) - this is the most reliable
-      final timestamp = json['createdAtTimestamp'] as int;
-      createdAtString =
-          DateTime.fromMillisecondsSinceEpoch(timestamp).toIso8601String();
+      final timestamp = json['createdAtTimestamp'];
+      if (timestamp is int) {
+        createdAtString =
+            DateTime.fromMillisecondsSinceEpoch(timestamp).toIso8601String();
+      } else if (timestamp is Timestamp) {
+        createdAtString = timestamp.toDate().toIso8601String();
+      } else {
+        createdAtString = DateTime.now().toIso8601String();
+      }
     } else if (json['createdAt'] != null) {
       // Handle createdAt field - check if it's Timestamp or String
       final createdAt = json['createdAt'];

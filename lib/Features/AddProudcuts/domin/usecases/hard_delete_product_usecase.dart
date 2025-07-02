@@ -5,20 +5,20 @@ import '../../../../core/config/ansicolor.dart';
 import '../../../../core/errors/failure.dart';
 import '../repos/product_repository.dart';
 
-class DeleteProductUseCase {
+class HardDeleteProductUseCase {
   final ProductRepository _productRepo;
 
-  DeleteProductUseCase(this._productRepo);
+  HardDeleteProductUseCase(this._productRepo);
 
   Future<Either<Failure, void>> call(String productId) async {
     log(DebugConsoleMessages.info(
-        '🔄 UseCase: Starting to delete product with ID: $productId'));
-    final result = await _productRepo.deleteProduct(productId);
+        '🔄 UseCase: Starting to hard delete product with ID: $productId'));
+    final result = await _productRepo.hardDeleteProduct(productId);
     result.fold(
       (failure) => log(DebugConsoleMessages.error(
-          '❌ UseCase: Product deletion failed: ${failure.message}')),
+          '❌ UseCase: Product hard deletion failed: ${failure.message}')),
       (_) => log(DebugConsoleMessages.success(
-          '✅ UseCase: Product deleted successfully: $productId')),
+          '✅ UseCase: Product hard deleted successfully: $productId')),
     );
     return result;
   }

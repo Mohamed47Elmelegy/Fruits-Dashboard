@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
+import '../../../../core/config/ansicolor.dart';
 import '../../domin/Entity/proudcuts_entity.dart';
 import '../../domin/Entity/reviews_entity.dart';
 import '../../domin/repos/product_repository.dart';
@@ -15,19 +18,24 @@ class EnhancedProductRepository implements ProductRepository {
   Future<Either<Failure, String>> addProduct(
       ProductsEntity product, File? imageFile) async {
     try {
-      print('🔄 Repository: Starting to add product...');
-      print('📦 Repository: Product entity: ${product.productName}');
+      log(DebugConsoleMessages.info(
+          '🔄 Repository: Starting to add product...'));
+      log(DebugConsoleMessages.info(
+          '📦 Repository: Product entity: ${product.productName}'));
 
       final productMap = _convertEntityToMap(product);
-      print('🗺️ Repository: Converted to map: $productMap');
+      log(DebugConsoleMessages.info(
+          '🗺️ Repository: Converted to map: $productMap'));
 
       final productId = await _productService.addProduct(productMap, imageFile);
-      print('✅ Repository: Product added successfully with ID: $productId');
+      log(DebugConsoleMessages.success(
+          '✅ Repository: Product added successfully with ID: $productId'));
 
       return Right(productId);
     } catch (e) {
-      print('❌ Repository: Error adding product: $e');
-      print('🔍 Repository: Error type: ${e.runtimeType}');
+      log(DebugConsoleMessages.error('❌ Repository: Error adding product: $e'));
+      log(DebugConsoleMessages.info(
+          '🔍 Repository: Error type: ${e.runtimeType}'));
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -47,9 +55,31 @@ class EnhancedProductRepository implements ProductRepository {
   @override
   Future<Either<Failure, void>> deleteProduct(String productId) async {
     try {
+      log(DebugConsoleMessages.info(
+          '🔄 Repository: Starting to soft delete product with ID: $productId'));
       await _productService.deleteProduct(productId);
+      log(DebugConsoleMessages.success(
+          '✅ Repository: Product soft deleted successfully: $productId'));
       return const Right(null);
     } catch (e) {
+      log(DebugConsoleMessages.error(
+          '❌ Repository: Error soft deleting product: $e'));
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// Hard delete product (completely remove from Firebase)
+  Future<Either<Failure, void>> hardDeleteProduct(String productId) async {
+    try {
+      log(DebugConsoleMessages.info(
+          '🔄 Repository: Starting to hard delete product with ID: $productId'));
+      await _productService.hardDeleteProduct(productId);
+      log(DebugConsoleMessages.success(
+          '✅ Repository: Product hard deleted successfully: $productId'));
+      return const Right(null);
+    } catch (e) {
+      log(DebugConsoleMessages.error(
+          '❌ Repository: Error hard deleting product: $e'));
       return Left(ServerFailure(e.toString()));
     }
   }

@@ -38,7 +38,7 @@ class _OrderStatusUpdateDialogState extends State<OrderStatusUpdateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Update Order Status'),
+      title: const Text('تحديث حالة الطلب'),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -48,13 +48,20 @@ class _OrderStatusUpdateDialogState extends State<OrderStatusUpdateDialog> {
             DropdownButtonFormField<String>(
               value: _selectedStatus,
               decoration: const InputDecoration(
-                labelText: 'Order Status',
+                labelText: 'حالة الطلب',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.assignment),
               ),
               items: OrderStatus.getAllStatuses().map((status) {
                 return DropdownMenuItem(
                   value: status,
-                  child: Text(OrderStatus.getDisplayName(status)),
+                  child: Row(
+                    children: [
+                      Icon(_getStatusIcon(status), size: 16),
+                      const SizedBox(width: 8),
+                      Text(_getStatusDisplayName(status)),
+                    ],
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -68,8 +75,9 @@ class _OrderStatusUpdateDialogState extends State<OrderStatusUpdateDialog> {
             // Notes Field
             CustomTextField(
               controller: _notesController,
-              hint: 'Add any notes about this status update...',
+              hint: 'أضف ملاحظات حول هذا التحديث...',
               maxLines: 3,
+              prefixIcon: const Icon(Icons.note),
             ),
           ],
         ),
@@ -77,7 +85,7 @@ class _OrderStatusUpdateDialogState extends State<OrderStatusUpdateDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text('إلغاء'),
         ),
         CustomButton(
           onPressed: () {
@@ -89,10 +97,52 @@ class _OrderStatusUpdateDialogState extends State<OrderStatusUpdateDialog> {
               Navigator.of(context).pop();
             }
           },
-          text: 'Update Status',
+          text: 'تحديث الحالة',
           icon: Icons.save,
         ),
       ],
     );
+  }
+
+  String _getStatusDisplayName(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'في الانتظار';
+      case 'confirmed':
+        return 'مؤكد';
+      case 'processing':
+        return 'قيد المعالجة';
+      case 'shipped':
+        return 'تم الشحن';
+      case 'delivered':
+        return 'تم التوصيل';
+      case 'cancelled':
+        return 'ملغي';
+      case 'refunded':
+        return 'مسترد';
+      default:
+        return 'غير معروف';
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return Icons.pending;
+      case 'confirmed':
+        return Icons.check_circle_outline;
+      case 'processing':
+        return Icons.inventory_2_outlined;
+      case 'shipped':
+        return Icons.local_shipping_outlined;
+      case 'delivered':
+        return Icons.shopping_cart_outlined;
+      case 'cancelled':
+        return Icons.cancel_outlined;
+      case 'refunded':
+        return Icons.money_off;
+      default:
+        return Icons.help_outline;
+    }
   }
 }

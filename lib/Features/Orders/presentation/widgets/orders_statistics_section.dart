@@ -35,33 +35,85 @@ class _OrdersStatisticsSectionState extends State<OrdersStatisticsSection> {
         return Container(
           padding: const EdgeInsets.all(16),
           color: ApplicationThemeManager.primaryColor.withOpacity(0.1),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: StatCardWidget(
-                  title: 'Total Orders',
-                  value: '${statistics['totalOrders'] ?? 0}',
-                  icon: Icons.shopping_cart,
-                  color: ApplicationThemeManager.primaryColor,
+              // Section Title
+              Text(
+                'إحصائيات الطلبات',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: ApplicationThemeManager.textPrimaryColor,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: StatCardWidget(
-                  title: 'Pending',
-                  value: '${statistics['pendingOrders'] ?? 0}',
-                  icon: Icons.pending,
-                  color: Colors.orange,
-                ),
+              const SizedBox(height: 16),
+
+              // Statistics Cards
+              Row(
+                children: [
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'إجمالي الطلبات',
+                      value: '${statistics['totalOrders'] ?? 0}',
+                      icon: Icons.shopping_cart,
+                      color: ApplicationThemeManager.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'في الانتظار',
+                      value: '${statistics['pendingOrders'] ?? 0}',
+                      icon: Icons.pending,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'تم التوصيل',
+                      value: '${statistics['deliveredOrders'] ?? 0}',
+                      icon: Icons.check_circle,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: StatCardWidget(
-                  title: 'Delivered',
-                  value: '${statistics['deliveredOrders'] ?? 0}',
-                  icon: Icons.check_circle,
-                  color: Colors.green,
-                ),
+
+              const SizedBox(height: 12),
+
+              // Second Row
+              Row(
+                children: [
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'قيد المعالجة',
+                      value: '${statistics['processingOrders'] ?? 0}',
+                      icon: Icons.inventory_2,
+                      color: Colors.purple,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'تم الشحن',
+                      value: '${statistics['shippedOrders'] ?? 0}',
+                      icon: Icons.local_shipping,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: StatCardWidget(
+                      title: 'الإيرادات',
+                      value:
+                          '${(statistics['totalRevenue'] ?? 0).toStringAsFixed(0)} ج.م',
+                      icon: Icons.attach_money,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
