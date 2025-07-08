@@ -1,39 +1,29 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/entity/order_entity.dart';
 import '../../domain/usecases/get_all_orders_usecase.dart';
 import '../../domain/usecases/get_orders_by_status_usecase.dart';
 import '../../domain/usecases/update_order_status_usecase.dart';
-import '../../domain/usecases/get_order_statistics_usecase.dart';
 import '../../domain/usecases/search_orders_usecase.dart';
 
 part 'order_state.dart';
-
-enum DateFilter {
-  all,
-  today,
-  thisWeek,
-  thisMonth,
-}
 
 class OrderCubit extends Cubit<OrderState> {
   final GetAllOrdersUseCase _getAllOrdersUseCase;
   final GetOrdersByStatusUseCase _getOrdersByStatusUseCase;
   final UpdateOrderStatusUseCase _updateOrderStatusUseCase;
-  final GetOrderStatisticsUseCase _getOrderStatisticsUseCase;
   final SearchOrdersUseCase _searchOrdersUseCase;
-  DateFilter _currentDateFilter = DateFilter.all;
 
   OrderCubit({
     required GetAllOrdersUseCase getAllOrdersUseCase,
     required GetOrdersByStatusUseCase getOrdersByStatusUseCase,
     required UpdateOrderStatusUseCase updateOrderStatusUseCase,
-    required GetOrderStatisticsUseCase getOrderStatisticsUseCase,
     required SearchOrdersUseCase searchOrdersUseCase,
   })  : _getAllOrdersUseCase = getAllOrdersUseCase,
         _getOrdersByStatusUseCase = getOrdersByStatusUseCase,
         _updateOrderStatusUseCase = updateOrderStatusUseCase,
-        _getOrderStatisticsUseCase = getOrderStatisticsUseCase,
         _searchOrdersUseCase = searchOrdersUseCase,
         super(OrderInitial());
 
@@ -41,12 +31,14 @@ class OrderCubit extends Cubit<OrderState> {
   Future<void> loadAllOrders() async {
     emit(OrderLoading());
     final result = await _getAllOrdersUseCase();
+
     result.fold(
-      (failure) => emit(OrderFailure(failure.message)),
+      (failure) {
+        log('🍕failure: $failure');
+        emit(OrderFailure(failure.message));
+      },
       (orders) {
-        final sorted = _sortOrdersByDate(orders);
-        final filtered = _filterOrdersByDate(sorted, _currentDateFilter);
-        emit(OrderLoaded(filtered));
+        emit(OrderLoaded(orders));
       },
     );
   }
@@ -79,20 +71,7 @@ class OrderCubit extends Cubit<OrderState> {
       (_) {
         // Reload orders and statistics after successful update
         loadAllOrders();
-        loadOrderStatistics();
       },
-    );
-  }
-
-  /// Load order statistics
-  Future<void> loadOrderStatistics() async {
-    emit(OrderStatisticsLoading());
-
-    final result = await _getOrderStatisticsUseCase();
-
-    result.fold(
-      (failure) => emit(OrderStatisticsFailure(failure.message)),
-      (statistics) => emit(OrderStatisticsLoaded(statistics)),
     );
   }
 
@@ -133,50 +112,6 @@ class OrderCubit extends Cubit<OrderState> {
   Future<void> refreshAllData() async {
     await Future.wait([
       loadAllOrders(),
-      loadOrderStatistics(),
     ]);
-  }
-
-  void setDateFilter(DateFilter filter) {
-    _currentDateFilter = filter;
-    if (state is OrderLoaded) {
-      final orders = (state as OrderLoaded).orders;
-      final filtered = _filterOrdersByDate(_sortOrdersByDate(orders), filter);
-      emit(OrderLoaded(filtered));
-    } else {
-      loadAllOrders();
-    }
-  }
-
-  List<OrderEntity> _sortOrdersByDate(List<OrderEntity> orders) {
-    return List<OrderEntity>.from(orders)
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-  }
-
-  List<OrderEntity> _filterOrdersByDate(
-      List<OrderEntity> orders, DateFilter filter) {
-    final now = DateTime.now();
-    switch (filter) {
-      case DateFilter.today:
-        return orders.where((order) {
-          final date = DateTime.parse(order.createdAt);
-          return date.year == now.year &&
-              date.month == now.month &&
-              date.day == now.day;
-        }).toList();
-      case DateFilter.thisWeek:
-        final weekStart = now.subtract(Duration(days: now.weekday - 1));
-        return orders.where((order) {
-          final date = DateTime.parse(order.createdAt);
-          return date.isAfter(weekStart.subtract(const Duration(days: 1)));
-        }).toList();
-      case DateFilter.thisMonth:
-        return orders.where((order) {
-          final date = DateTime.parse(order.createdAt);
-          return date.year == now.year && date.month == now.month;
-        }).toList();
-      case DateFilter.all:
-        return orders;
-    }
   }
 }

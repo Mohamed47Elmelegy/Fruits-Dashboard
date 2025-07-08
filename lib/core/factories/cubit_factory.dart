@@ -32,7 +32,6 @@ class CubitFactory {
       getAllOrdersUseCase: _getIt<GetAllOrdersUseCase>(),
       getOrdersByStatusUseCase: _getIt<GetOrdersByStatusUseCase>(),
       updateOrderStatusUseCase: _getIt<UpdateOrderStatusUseCase>(),
-      getOrderStatisticsUseCase: _getIt<GetOrderStatisticsUseCase>(),
       searchOrdersUseCase: _getIt<SearchOrdersUseCase>(),
     );
   }

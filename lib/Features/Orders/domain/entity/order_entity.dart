@@ -84,6 +84,14 @@ class OrderEntity {
   /// Get status icon
   String get statusIcon => _getStatusIcon(status);
 
+  /// احسب مجموع الطلبات
+  static int totalOrders(List<OrderEntity> orders) => orders.length;
+
+  /// احسب الإيرادات الكلية (تستثني الملغاة والمسترجعة)
+  static double totalRevenue(List<OrderEntity> orders) => orders
+      .where((order) => !order.isCancelled && !order.isRefunded)
+      .fold(0, (sum, order) => sum + order.total);
+
   String _formatDate(String dateString) {
     try {
       final date = DateTime.parse(dateString);

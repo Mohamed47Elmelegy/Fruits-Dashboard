@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/application_theme_manager.dart';
 import '../manager/order_cubit.dart';
-import 'orders_statistics_section.dart';
 import 'orders_search_filter_section.dart';
 import 'orders_list_section.dart';
 
@@ -16,7 +15,7 @@ class OrdersViewBody extends StatefulWidget {
 class _OrdersViewBodyState extends State<OrdersViewBody> {
   String _selectedStatus = 'all';
   final TextEditingController _searchController = TextEditingController();
-  DateFilter _selectedDateFilter = DateFilter.all;
+ // DateFilter _selectedDateFilter = DateFilter.all;
 
   @override
   void initState() {
@@ -45,12 +44,12 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
     }
   }
 
-  void _onDateFilterChanged(DateFilter filter) {
-    setState(() {
-      _selectedDateFilter = filter;
-    });
-    context.read<OrderCubit>().setDateFilter(filter);
-  }
+  // void _onDateFilterChanged(DateFilter filter) {
+  //   setState(() {
+  //     _selectedDateFilter = filter;
+  //   });
+  //   context.read<OrderCubit>().setDateFilter(filter);
+  // }
 
   void _onSearchChanged(String? query) {
     if (query != null && query.isNotEmpty) {
@@ -130,15 +129,14 @@ class _OrdersViewBodyState extends State<OrdersViewBody> {
             },
             child: CustomScrollView(
               slivers: [
-                const SliverToBoxAdapter(child: OrdersStatisticsSection()),
                 SliverToBoxAdapter(
                   child: OrdersSearchFilterSection(
                     selectedStatus: _selectedStatus,
                     searchController: _searchController,
                     onStatusChanged: _onStatusFilterChanged,
                     onSearchChanged: _onSearchChanged,
-                    selectedDateFilter: _selectedDateFilter,
-                    onDateFilterChanged: _onDateFilterChanged,
+                        // selectedDateFilter: _selectedDateFilter,
+                        // onDateFilterChanged: _onDateFilterChanged,
                   ),
                 ),
                 if (state is OrderLoaded)

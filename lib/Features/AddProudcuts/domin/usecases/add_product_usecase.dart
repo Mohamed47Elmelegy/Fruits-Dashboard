@@ -13,7 +13,7 @@ class AddProductUseCase {
   AddProductUseCase(this._productRepo);
 
   Future<Either<Failure, String>> call(
-      ProductsEntity product, File? imageFile) async {
+      ProductsEntity product, dynamic imageFile) async {
     log(DebugConsoleMessages.info('🎯 UseCase: Starting to add product...'));
     log(DebugConsoleMessages.info(
         '📦 UseCase: Product name: ${product.productName}'));

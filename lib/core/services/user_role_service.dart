@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../config/ansicolor.dart';
@@ -8,7 +7,6 @@ import '../config/ansicolor.dart';
 enum UserRole { customer, admin, unknown }
 
 class UserRoleService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Get current user's role
@@ -18,17 +16,17 @@ class UserRoleService {
       if (user == null) return UserRole.unknown;
 
       // Check if user is admin
-      final adminDoc =
-          await _firestore.collection('admins').doc(user.uid).get();
-      if (adminDoc.exists) {
-        return UserRole.admin;
-      }
+      // final adminDoc =
+      //     await _firestore.collection('admins').doc(user.uid).get();
+      // if (adminDoc.exists) {
+      //   return UserRole.admin;
+      // }
 
       // Check if user is customer
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        return UserRole.customer;
-      }
+      // final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      // if (userDoc.exists) {
+      //   return UserRole.customer;
+      // }
 
       return UserRole.unknown;
     } catch (e) {
@@ -60,22 +58,22 @@ class UserRoleService {
         'email': email,
         'name': name,
         'role': role.name,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'createdAt': DateTime.now().toIso8601String(),
+        'updatedAt': DateTime.now().toIso8601String(),
       };
 
       // Add to users collection
-      await _firestore.collection('users').doc(uid).set(userData);
+      // await _firestore.collection('users').doc(uid).set(userData);
 
       // If admin, also add to admins collection
-      if (role == UserRole.admin) {
-        await _firestore.collection('admins').doc(uid).set({
-          'uid': uid,
-          'email': email,
-          'name': name,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
+      // if (role == UserRole.admin) {
+      //   await _firestore.collection('admins').doc(uid).set({
+      //     'uid': uid,
+      //     'email': email,
+      //     'name': name,
+      //     'createdAt': FieldValue.serverTimestamp(),
+      //   });
+      // }
     } catch (e) {
       log(DebugConsoleMessages.error('Error creating user profile: $e'));
       rethrow;
@@ -85,8 +83,8 @@ class UserRoleService {
   /// Get user profile data
   Future<Map<String, dynamic>?> getUserProfile(String uid) async {
     try {
-      final doc = await _firestore.collection('users').doc(uid).get();
-      return doc.data();
+      // final doc = await _firestore.collection('users').doc(uid).get();
+      return null;
     } catch (e) {
       log(DebugConsoleMessages.error('Error getting user profile: $e'));
       return null;
@@ -96,10 +94,10 @@ class UserRoleService {
   /// Update user profile
   Future<void> updateUserProfile(String uid, Map<String, dynamic> data) async {
     try {
-      await _firestore.collection('users').doc(uid).update({
-        ...data,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      // await _firestore.collection('users').doc(uid).update({
+      //   ...data,
+      //   'updatedAt': FieldValue.serverTimestamp(),
+      // });
     } catch (e) {
       log(DebugConsoleMessages.error('Error updating user profile: $e'));
       rethrow;
@@ -109,8 +107,8 @@ class UserRoleService {
   /// Delete user profile
   Future<void> deleteUserProfile(String uid) async {
     try {
-      await _firestore.collection('users').doc(uid).delete();
-      await _firestore.collection('admins').doc(uid).delete();
+      // await _firestore.collection('users').doc(uid).delete();
+      // await _firestore.collection('admins').doc(uid).delete();
     } catch (e) {
       log(DebugConsoleMessages.error('Error deleting user profile: $e'));
       rethrow;

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data'; // Added for Uint8List
 import 'package:furute_app_dashbord/core/config/ansicolor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../constants/constants.dart';
@@ -98,6 +99,52 @@ class SupabaseStorageService implements StorageService {
       log(DebugConsoleMessages.error('Upload path: $path'));
       log(DebugConsoleMessages.error('Bucket: ${Constatns.supabaseBucket}'));
       throw Exception('Failed to upload file: $e');
+    }
+  }
+
+  Future<String> uploadBytes(
+      Uint8List bytes, String path, String fileName) async {
+    try {
+      log(DebugConsoleMessages.info('Starting bytes upload: $fileName'));
+      log(DebugConsoleMessages.info('Upload path: $path'));
+      log(DebugConsoleMessages.info(
+          'Bucket name: ${Constatns.supabaseBucket}'));
+
+      String fullPath = '$path/$fileName';
+      log(DebugConsoleMessages.info('Full upload path: $fullPath'));
+      log(DebugConsoleMessages.info('Bytes size: ${bytes.length} bytes'));
+
+      // Check if bucket exists before uploading
+      var buckets = await _supabase.client.storage.listBuckets();
+      bool bucketExists =
+          buckets.any((bucket) => bucket.name == Constatns.supabaseBucket);
+
+      if (!bucketExists) {
+        log(DebugConsoleMessages.warning(
+            'Bucket ${Constatns.supabaseBucket} not found, creating it...'));
+        await createBucket(Constatns.supabaseBucket);
+      }
+
+      // Upload bytes to Supabase
+      await _supabase.client.storage
+          .from(Constatns.supabaseBucket)
+          .uploadBinary(fullPath, bytes);
+
+      log(DebugConsoleMessages.success(
+          'Bytes uploaded successfully: $fileName'));
+
+      // Get public URL
+      final String publicUrl = _supabase.client.storage
+          .from(Constatns.supabaseBucket)
+          .getPublicUrl(fullPath);
+
+      log(DebugConsoleMessages.success('Public URL generated: $publicUrl'));
+      return publicUrl;
+    } catch (e) {
+      log(DebugConsoleMessages.error('Failed to upload bytes: $e'));
+      log(DebugConsoleMessages.error('Upload path: $path'));
+      log(DebugConsoleMessages.error('Bucket: ${Constatns.supabaseBucket}'));
+      throw Exception('Failed to upload bytes: $e');
     }
   }
 }

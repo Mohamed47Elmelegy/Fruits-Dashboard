@@ -28,6 +28,10 @@ class NavigationHelper {
     navigatorKey.currentState?.pop();
   }
 
+  static void goToSettings() {
+    pushNamed(PageRoutesName.settings);
+  }
+
   // Pop with result
   static void popWithResult(dynamic result) {
     navigatorKey.currentState?.pop(result);

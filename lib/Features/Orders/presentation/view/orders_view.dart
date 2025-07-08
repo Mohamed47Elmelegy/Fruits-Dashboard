@@ -19,7 +19,6 @@ class OrdersView extends StatelessWidget {
         getAllOrdersUseCase: getIt<GetAllOrdersUseCase>(),
         getOrdersByStatusUseCase: getIt<GetOrdersByStatusUseCase>(),
         updateOrderStatusUseCase: getIt<UpdateOrderStatusUseCase>(),
-        getOrderStatisticsUseCase: getIt<GetOrderStatisticsUseCase>(),
         searchOrdersUseCase: getIt<SearchOrdersUseCase>(),
       )..loadAllOrders(),
       child: const OrdersViewBody(),

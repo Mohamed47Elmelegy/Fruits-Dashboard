@@ -146,7 +146,9 @@ class DashboardChoicesSection extends StatelessWidget {
                 subtitle: 'تكوين النظام',
                 color: const Color(0xFFFF9800),
                 isSmallScreen: isSmallScreen,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.goToSettings();
+                },
               ),
             ),
           ],

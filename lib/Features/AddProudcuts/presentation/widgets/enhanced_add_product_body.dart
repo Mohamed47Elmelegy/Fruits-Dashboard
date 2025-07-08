@@ -13,6 +13,8 @@ import '../../../../core/widgets/section_header.dart';
 import '../../../../core/widgets/loading_overlay.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/form_header.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 
 class EnhancedAddProductBody extends StatefulWidget {
   final Map<String, dynamic>? productToEdit;
@@ -39,6 +41,7 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
   final _unitAmountController = TextEditingController();
 
   File? _selectedImage;
+  Uint8List? _webImage;
   bool _isFeatured = false;
   bool _isOrganic = false;
   bool _isEditing = false;
@@ -70,6 +73,14 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
   void _onImageSelected(File image) {
     setState(() {
       _selectedImage = image;
+      _webImage = null;
+    });
+  }
+
+  void _onWebImageSelected(Uint8List bytes) {
+    setState(() {
+      _webImage = bytes;
+      _selectedImage = null;
     });
   }
 
@@ -105,12 +116,13 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
         context.read<EnhancedProductCubit>().updateProduct(
               widget.productToEdit!['id'],
               product,
-              _selectedImage,
+              kIsWeb ? _webImage : _selectedImage,
             );
       } else {
-        context
-            .read<EnhancedProductCubit>()
-            .addProduct(product, _selectedImage);
+        context.read<EnhancedProductCubit>().addProduct(
+              product,
+              kIsWeb ? _webImage : _selectedImage,
+            );
       }
     }
   }
@@ -158,6 +170,7 @@ class _EnhancedAddProductBodyState extends State<EnhancedAddProductBody> {
                         ProductImagePicker(
                           selectedImage: _selectedImage,
                           onImageSelected: _onImageSelected,
+                          onWebImageSelected: _onWebImageSelected,
                         ),
                       ],
                     ),

@@ -1,3 +1,5 @@
+import 'package:furute_app_dashbord/Features/Orders/data/models/order_statues_history_model.dart';
+
 import '../../domain/entity/order_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -160,49 +162,9 @@ class OrderModel extends OrderEntity {
       statusHistory: statusHistory ?? this.statusHistory,
     );
   }
-}
-
-class OrderStatusHistoryModel extends OrderStatusHistory {
-  OrderStatusHistoryModel({
-    required super.status,
-    required super.updatedBy,
-    required super.updatedAt,
-    super.notes,
-  });
-
-  factory OrderStatusHistoryModel.fromJson(Map<String, dynamic> json) {
-    final updatedAt = json['updatedAt'];
-    DateTime updatedAtDateTime;
-    if (updatedAt is Timestamp) {
-      // If it's a Firestore Timestamp, convert to DateTime
-      updatedAtDateTime = updatedAt.toDate();
-    } else if (updatedAt is String) {
-      try {
-        // If it's a string, try to parse it
-        updatedAtDateTime = DateTime.parse(updatedAt);
-      } catch (e) {
-        // If parsing fails, use current time
-        updatedAtDateTime = DateTime.now();
-      }
-    } else {
-      // Fallback to current time if updatedAt is neither Timestamp nor String
-      updatedAtDateTime = DateTime.now();
-    }
-    return OrderStatusHistoryModel(
-      status: json['status'] ?? '',
-      updatedBy: json['updatedBy'] ?? '',
-      updatedAt: updatedAtDateTime,
-      notes: json['notes'],
-    );
-  }
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'updatedBy': updatedBy,
-      'updatedAt': updatedAt.toIso8601String(),
-      'notes': notes,
-    };
+  String toString() {
+    return 'OrderModel(id: $id, statusHistory: $statusHistory)';
   }
 }

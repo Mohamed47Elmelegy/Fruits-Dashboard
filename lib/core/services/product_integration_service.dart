@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,7 +27,7 @@ class ProductIntegrationService {
 
   /// Add new product from admin dashboard
   Future<String> addProduct(
-      Map<String, dynamic> productData, File? imageFile) async {
+      Map<String, dynamic> productData, dynamic imageFile) async {
     try {
       log(DebugConsoleMessages.info('Starting to add product...'));
       log(DebugConsoleMessages.info('📦 Product data: $productData'));
@@ -36,8 +37,13 @@ class ProductIntegrationService {
       // Upload image if provided
       if (imageFile != null) {
         log(DebugConsoleMessages.info('📸 Uploading image...'));
-        imageUrl =
-            await _uploadProductImage(imageFile, productData['productCode']);
+        if (imageFile is Uint8List) {
+          imageUrl = await _uploadProductImageBytes(
+              imageFile, productData['productCode']);
+        } else if (imageFile is File) {
+          imageUrl =
+              await _uploadProductImage(imageFile, productData['productCode']);
+        }
         log(DebugConsoleMessages.success(
             '✅ Image uploaded successfully: $imageUrl'));
       } else {
@@ -76,13 +82,21 @@ class ProductIntegrationService {
 
   /// Update existing product
   Future<void> updateProduct(String productId, Map<String, dynamic> productData,
-      File? imageFile) async {
+      dynamic imageFile) async {
     try {
       // Upload new image if provided
       if (imageFile != null) {
-        final imageUrl =
-            await _uploadProductImage(imageFile, productData['productCode']);
-        productData['imageUrl'] = imageUrl;
+        String? imageUrl;
+        if (imageFile is Uint8List) {
+          imageUrl = await _uploadProductImageBytes(
+              imageFile, productData['productCode']);
+        } else if (imageFile is File) {
+          imageUrl =
+              await _uploadProductImage(imageFile, productData['productCode']);
+        }
+        if (imageUrl != null) {
+          productData['imageUrl'] = imageUrl;
+        }
       }
 
       // Update timestamp
@@ -312,6 +326,20 @@ class ProductIntegrationService {
     }
   }
 
+  /// Upload product image from bytes to Supabase Storage
+  Future<String> _uploadProductImageBytes(
+      Uint8List bytes, String productCode) async {
+    final fileName =
+        '${productCode}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final filePath = 'products/images/$fileName';
+    await _supabase.storage
+        .from(Constatns.supabaseBucket)
+        .uploadBinary(filePath, bytes);
+    final imageUrl =
+        _supabase.storage.from(Constatns.supabaseBucket).getPublicUrl(filePath);
+    return imageUrl;
+  }
+
   /// Search products by name or description
   Future<List<Map<String, dynamic>>> searchProducts(String query) async {
     try {
@@ -366,7 +394,7 @@ class ProductIntegrationService {
           'isFeatured': data['isFeatured'] ?? false,
           'imageUrl': data['imageUrl'],
           'expiryDateMonths': data['expiryDateMonths'],
-          'calorieDensity': data['calories'] ??
+          'calorieDensity': data['calorieDensity'] ??
               data['calorieDensity'], // Handle both field names
           'unitAmount':
               data['unitAmount']?.toString() ?? '0', // Convert back to string

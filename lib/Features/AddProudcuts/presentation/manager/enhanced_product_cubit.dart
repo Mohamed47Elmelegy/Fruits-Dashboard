@@ -34,7 +34,7 @@ class EnhancedProductCubit extends Cubit<EnhancedProductState> {
         super(EnhancedProductInitial());
 
   /// Add new product
-  Future<void> addProduct(ProductsEntity product, File? imageFile) async {
+  Future<void> addProduct(ProductsEntity product, dynamic imageFile) async {
     log(DebugConsoleMessages.info('🎯 Cubit: Starting to add product...'));
     log(DebugConsoleMessages.info(
         '📦 Cubit: Product name: ${product.productName}'));
@@ -70,7 +70,7 @@ class EnhancedProductCubit extends Cubit<EnhancedProductState> {
 
   /// Update existing product
   Future<void> updateProduct(
-      String productId, ProductsEntity product, File? imageFile) async {
+      String productId, ProductsEntity product, dynamic imageFile) async {
     if (isClosed) {
       log(DebugConsoleMessages.warning(
           '⚠️ Cubit: Cannot update product - cubit is closed'));

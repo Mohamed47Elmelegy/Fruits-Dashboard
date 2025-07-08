@@ -7,6 +7,7 @@ import '../../domin/repos/product_repository.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/services/product_integration_service.dart';
 import 'dart:io';
+import 'dart:typed_data';
 
 class EnhancedProductRepository implements ProductRepository {
   final ProductIntegrationService _productService;
@@ -15,7 +16,7 @@ class EnhancedProductRepository implements ProductRepository {
 
   @override
   Future<Either<Failure, String>> addProduct(
-      ProductsEntity product, File? imageFile) async {
+      ProductsEntity product, dynamic imageFile) async {
     try {
       log(DebugConsoleMessages.info(
           '🔄 Repository: Starting to add product...'));
@@ -26,7 +27,12 @@ class EnhancedProductRepository implements ProductRepository {
       log(DebugConsoleMessages.info(
           '🗺️ Repository: Converted to map: $productMap'));
 
-      final productId = await _productService.addProduct(productMap, imageFile);
+      String productId;
+      if (imageFile is Uint8List || imageFile is File) {
+        productId = await _productService.addProduct(productMap, imageFile);
+      } else {
+        productId = await _productService.addProduct(productMap, null);
+      }
       log(DebugConsoleMessages.success(
           '✅ Repository: Product added successfully with ID: $productId'));
 
@@ -41,10 +47,14 @@ class EnhancedProductRepository implements ProductRepository {
 
   @override
   Future<Either<Failure, void>> updateProduct(
-      String productId, ProductsEntity product, File? imageFile) async {
+      String productId, ProductsEntity product, dynamic imageFile) async {
     try {
       final productMap = _convertEntityToMap(product);
-      await _productService.updateProduct(productId, productMap, imageFile);
+      if (imageFile is Uint8List || imageFile is File) {
+        await _productService.updateProduct(productId, productMap, imageFile);
+      } else {
+        await _productService.updateProduct(productId, productMap, null);
+      }
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

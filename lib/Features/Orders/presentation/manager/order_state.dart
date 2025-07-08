@@ -30,23 +30,3 @@ class OrderFailure extends OrderState {
   @override
   List<Object?> get props => [message];
 }
-
-class OrderStatisticsLoading extends OrderState {}
-
-class OrderStatisticsLoaded extends OrderState {
-  final Map<String, dynamic> statistics;
-
-  const OrderStatisticsLoaded(this.statistics);
-
-  @override
-  List<Object?> get props => [statistics];
-}
-
-class OrderStatisticsFailure extends OrderState {
-  final String message;
-
-  const OrderStatisticsFailure(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}

@@ -4,5 +4,5 @@ import 'package:dartz/dartz.dart';
 import '../../errors/failure.dart';
 
 abstract class AddImagesRepo {
-  Future<Either<Failure, String>> uploadImage(File files);
+  Future<Either<Failure, String>> uploadImage(dynamic image);
 }

@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/application_theme_manager.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+  const DashboardHeader(
+      {super.key,
+      required this.productsCount,
+      required this.ordersCount,
+      required this.revenue});
+  final int productsCount;
+  final int ordersCount;
+  final int revenue;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +117,7 @@ class DashboardHeader extends StatelessWidget {
             Expanded(
               child: _buildStatItem(
                 icon: Icons.inventory_2,
-                value: '25',
+                value: productsCount.toString() ,
                 label: 'المنتجات',
                 color: const Color(0xFF4CAF50),
                 isSmallScreen: isSmallScreen,
@@ -120,7 +127,7 @@ class DashboardHeader extends StatelessWidget {
             Expanded(
               child: _buildStatItem(
                 icon: Icons.shopping_cart,
-                value: '12',
+                value: ordersCount.toString(),
                 label: 'الطلبات',
                 color: const Color(0xFF2196F3),
                 isSmallScreen: isSmallScreen,
@@ -130,7 +137,7 @@ class DashboardHeader extends StatelessWidget {
             Expanded(
               child: _buildStatItem(
                 icon: Icons.attach_money,
-                value: '1,250',
+                value: revenue.toString(),
                 label: 'الإيرادات',
                 color: const Color(0xFFFF9800),
                 isSmallScreen: isSmallScreen,
